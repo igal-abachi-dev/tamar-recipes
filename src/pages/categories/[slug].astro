@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RecipesPage from '../../components/pages/RecipesPage.svelte';
+import { getSiteContent } from '../../lib/content';
+import type { Category, Recipe } from '../../types/content';
+
+export async function getStaticPaths() {
+  const { recipes, categories, isDemo } = await getSiteContent();
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+    props: {
+      category,
+      categories,
+      recipes: recipes.filter((recipe) => recipe.category?.slug === category.slug),
+      isDemo,
+    },
+  }));
+}
+interface Props {
+  category: Category;
+  categories: Category[];
+  recipes: Recipe[];
+  isDemo: boolean;
+}
+const { category, categories, recipes, isDemo } = Astro.props;
+---
+
+<Layout
+  title={`${category.title} | אתר המתכונים של תמר`}
+  description={category.description || `מתכונים בקטגוריית ${category.title}`}
+  noindex={isDemo}
+>
+  <RecipesPage
+    {recipes}
+    {categories}
+    {isDemo}
+    title={category.title}
+    description={category.description}
+    activeSlug={category.slug}
+  />
+</Layout>

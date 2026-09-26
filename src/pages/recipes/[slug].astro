@@ -1,0 +1,199 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RecipeDetail from '../../components/pages/RecipeDetail.svelte';
+import RecipeTools from '../../components/islands/RecipeTools.svelte';
+import { getSiteContent, imageSrc, totalMinutes } from '../../lib/content';
+import {
+  allIngredientGroups,
+  allRecipeSteps,
+  recipeVideos,
+  sortedTimeline,
+} from '../../lib/recipe-helpers';
+import { formatMeasure, ingredientMeasures } from '../../lib/measure';
+import type { Recipe } from '../../types/content';
+
+export async function getStaticPaths() {
+  const { recipes, isDemo } = await getSiteContent();
+  return recipes.map((recipe) => ({
+    params: { slug: recipe.slug },
+    props: {
+      recipe,
+      isDemo,
+      linkedVersions: recipes.filter(
+        (other) =>
+          other.slug !== recipe.slug &&
+          other.variations?.some((variation) => variation.linkedRecipe?.slug === recipe.slug),
+      ),
+      related: recipes
+        .filter((other) => other.slug !== recipe.slug)
+        .map((other) => ({
+          recipe: other,
+          score:
+            (other.category?.slug === recipe.category?.slug ? 10 : 0) +
+            (other.tags || []).filter((tag) => recipe.tags?.includes(tag)).length,
+        }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((item) => item.recipe),
+    },
+  }));
+}
+interface Props {
+  recipe: Recipe;
+  isDemo: boolean;
+  related: Recipe[];
+  linkedVersions: Recipe[];
+}
+const { recipe, isDemo, related, linkedVersions } = Astro.props;
+const image = imageSrc(recipe.image, 1200, 630);
+const description = recipe.description;
+const recipeJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: recipe.title,
+  description,
+  image: recipe.image?.asset
+    ? [
+        [1200, 1200],
+        [1200, 900],
+        [1200, 675],
+      ].map(([width, height]) => new URL(imageSrc(recipe.image, width, height)!, Astro.site).href)
+    : image
+      ? [new URL(image, Astro.site).href]
+      : undefined,
+  author: { '@type': 'Person', name: 'תמר' },
+  inLanguage: 'he',
+  recipeYield:
+    recipe.yieldText ||
+    (recipe.yieldCount && recipe.yieldUnit
+      ? `${recipe.yieldCount} ${recipe.yieldUnit}`
+      : undefined) ||
+    (recipe.servings ? `${recipe.servings} מנות` : undefined),
+  recipeCategory: recipe.category?.title,
+  keywords: recipe.tags?.join(', '),
+  prepTime: recipe.prepMinutes !== undefined ? `PT${recipe.prepMinutes}M` : undefined,
+  cookTime: recipe.cookMinutes !== undefined ? `PT${recipe.cookMinutes}M` : undefined,
+  totalTime: recipe.elapsedMinutes !== undefined ? `PT${totalMinutes(recipe)}M` : undefined,
+  recipeIngredient: allIngredientGroups(recipe).flatMap((group) =>
+    group.items.map((item) =>
+      [
+        formatMeasure(item, 1, 'original', recipe.gramsFirst ?? recipe.category?.slug === 'baking')
+          .primary,
+        item.name,
+        item.note && `(${item.note})`,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    ),
+  ),
+  recipeInstructions: [
+    ...(recipe.steps || []).map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      text: step.text,
+    })),
+    ...(recipe.components || []).map((component) => ({
+      '@type': 'HowToSection',
+      name: component.title,
+      itemListElement: component.recipeReference
+        ? [
+            {
+              '@type': 'HowToStep',
+              text: `מכינים לפי המתכון של ${component.recipeReference.title}`,
+              url: new URL(`/recipes/${component.recipeReference.slug}`, Astro.site).href,
+            },
+          ]
+        : (component.steps || []).map((step, index) => ({
+            '@type': 'HowToStep',
+            position: index + 1,
+            text: step.text,
+          })),
+    })),
+  ],
+  datePublished: recipe.publishedAt,
+  dateModified: recipe._updatedAt || recipe.publishedAt,
+};
+const jsonLd = isDemo
+  ? undefined
+  : {
+      '@context': 'https://schema.org',
+      '@graph': [
+        recipeJsonLd,
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'בית', item: new URL('/', Astro.site).href },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'מתכונים',
+              item: new URL('/recipes', Astro.site).href,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: recipe.title,
+              item: new URL(`/recipes/${recipe.slug}`, Astro.site).href,
+            },
+          ],
+        },
+      ],
+    };
+---
+
+<Layout
+  title={`${recipe.title} | אתר המתכונים של תמר`}
+  {description}
+  {image}
+  type="article"
+  noindex={isDemo}
+  {jsonLd}
+>
+  <RecipeDetail {recipe} {related} {linkedVersions} />
+  <RecipeTools
+    title={recipe.title}
+    url={new URL(Astro.url.pathname, Astro.site).href}
+    slug={recipe.slug}
+    steps={allRecipeSteps(recipe).map(
+      ({
+        text,
+        stage,
+        componentTitle,
+        localNumber,
+        recipeUrl,
+        durationMinutes,
+        durationMinutesMax,
+        ovenTimerMinutes,
+        temperatureC,
+        ovenMode,
+        flameSelectLevel,
+        burnerSize,
+        cue,
+      }) => ({
+        text,
+        stage,
+        componentTitle,
+        localNumber,
+        recipeUrl,
+        durationMinutes,
+        durationMinutesMax,
+        ovenTimerMinutes,
+        temperatureC,
+        ovenMode,
+        flameSelectLevel,
+        burnerSize,
+        cue,
+      }),
+    )}
+    timeline={sortedTimeline(recipe)}
+    baseServings={recipe.servings || 0}
+    ingredientMeasures={ingredientMeasures(recipe)}
+    gramsFirst={recipe.gramsFirst ?? recipe.category?.slug === 'baking'}
+    client:idle
+  />
+  {
+    !recipeVideos(recipe).length && recipe.video?.asset?.playbackId && (
+      <script>import '@mux/mux-player';</script>
+    )
+  }
+</Layout>

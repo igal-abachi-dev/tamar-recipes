@@ -1,0 +1,66 @@
+---
+import Header from '../components/layout/Header.svelte';
+import Footer from '../components/layout/Footer.svelte';
+import '../styles/global.css';
+import { getSiteContent } from '../lib/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  lang?: 'he' | 'en';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>;
+}
+const {
+  title = 'אתר המתכונים של תמר | מתכונים של בית',
+  description = 'מתכונים אהובים, טעמים של משפחה, וכל הסיבות הטובות להתכנס סביב השולחן.',
+  image,
+  type = 'website',
+  lang = 'he',
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shouldNoindex =
+  noindex ||
+  !import.meta.env.PUBLIC_SITE_URL ||
+  import.meta.env.PUBLIC_SITE_URL === 'https://example.com';
+const { settings } = await getSiteContent();
+---
+
+<!doctype html>
+<html lang={lang} dir={lang === 'he' ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {shouldNoindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical.href} />
+    <meta property="og:locale" content={lang === 'he' ? 'he_IL' : 'en_US'} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site).href} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {
+      jsonLd && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">דלגו לתוכן</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer {settings} />
+  </body>
+</html>

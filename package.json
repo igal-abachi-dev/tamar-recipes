@@ -1,0 +1,48 @@
+{
+  "name": "tamar-recipes",
+  "type": "module",
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.17.0",
+  "description": "Hebrew-first Tamar Recipes site with Astro, Svelte, Sanity, YouTube and optional Mux",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "check": "pnpm format:check && astro check && svelte-check --tsconfig ./tsconfig.json && node scripts/check-schema.mjs && node scripts/check-recipes.mjs",
+    "format": "prettier --write src scripts astro.config.mjs sanity.config.ts sanity.cli.ts package.json vercel.json",
+    "format:check": "prettier --check src scripts astro.config.mjs sanity.config.ts sanity.cli.ts package.json vercel.json",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sanity": "sanity",
+    "sanity:dev": "sanity dev",
+    "sanity:deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.1",
+    "@astrojs/svelte": "^9.0.1",
+    "@fontsource-variable/assistant": "^5.3.0",
+    "@fontsource-variable/heebo": "^5.3.0",
+    "@mux/mux-player": "^3.3.0",
+    "@portabletext/svelte": "^3.0.0",
+    "@sanity/client": "^7.6.0",
+    "@sanity/image-url": "^1.1.0",
+    "astro": "^7.3.4",
+    "groq": "^3.89.0",
+    "sanity": "^3.89.0",
+    "sanity-plugin-mux-input": "^2.8.0",
+    "svelte": "^5.28.2",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^22.15.3",
+    "esbuild": "^0.27.7",
+    "prettier": "^3.5.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-svelte": "^3.3.3",
+    "svelte-check": "^4.1.6",
+    "vite": "8.3.1"
+  }
+}

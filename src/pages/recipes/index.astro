@@ -1,0 +1,147 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RecipeCard from '../../components/cards/RecipeCard.svelte';
+import RecipeSearch from '../../components/islands/RecipeSearch.svelte';
+import { getSiteContent, imageSrc } from '../../lib/content';
+import type { RecipeSearchItem } from '../../types/content';
+import { allIngredientGroups, passoverStatus } from '../../lib/recipe-helpers';
+const { recipes, categories, isDemo } = await getSiteContent();
+const index: RecipeSearchItem[] = recipes.map((recipe) => ({
+  title: recipe.title,
+  slug: recipe.slug,
+  description: recipe.description,
+  imageUrl: imageSrc(recipe.image, 360, 270),
+  categoryTitle: recipe.category?.title,
+  tags: recipe.tags || [],
+  ingredients: allIngredientGroups(recipe).flatMap((group) => group.items.map((item) => item.name)),
+  dietaryLabels: recipe.dietaryLabels || [],
+  passoverStatus: passoverStatus(recipe),
+}));
+---
+
+<Layout
+  title="כל המתכונים | אתר המתכונים של תמר"
+  description="כל המתכונים של תמר, מסודרים לפי ארוחות עיקריות, אפייה, סלטים וקינוחים."
+  noindex={isDemo}
+>
+  <div class="archive">
+    {
+      isDemo && (
+        <div class="demo-note">תוכן להמחשה בלבד — המתכונים והתמונות יוחלפו במתכונים של תמר.</div>
+      )
+    }
+    <header class="listing-header">
+      <span class="eyebrow">מהמטבח של תמר</span><h1>כל המתכונים</h1><p>
+        מה מתחשק להכין היום? כל המתכונים מחכים כאן, מסודרים בשבילכם.
+      </p>
+    </header>
+    <nav class="category-pills" aria-label="סינון לפי קטגוריה">
+      <a href="/recipes" class="active">הכול</a>
+      {categories.map((category) => <a href={`/categories/${category.slug}`}>{category.title}</a>)}
+    </nav>
+    <RecipeSearch {index} client:idle />
+    <div id="archive-grid">
+      <div class="count">{recipes.length} מתכונים</div>
+      {
+        recipes.length ? (
+          <div class="recipe-grid">
+            {recipes.map((recipe) => (
+              <RecipeCard {recipe} />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">בקרוב יהיו כאן המתכונים של תמר.</div>
+        )
+      }
+    </div>
+  </div>
+</Layout>
+<style>
+  .archive {
+    max-width: var(--max-width);
+    margin: auto;
+    padding: 72px 28px 50px;
+  }
+  .demo-note {
+    background: #f4e5c9;
+    color: #5b3e22;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 35px;
+  }
+  .listing-header {
+    text-align: center;
+  }
+  .eyebrow {
+    color: var(--orange);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+  }
+  h1 {
+    font: 700 clamp(46px, 6vw, 76px)/1.1 var(--font-display);
+    letter-spacing: -0.06em;
+    margin: 12px 0;
+  }
+  .listing-header p {
+    color: var(--muted);
+    max-width: 570px;
+    margin: 0 auto;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    margin: 42px 0 34px;
+  }
+  .category-pills a {
+    padding: 10px 17px;
+    border: 1px solid var(--line);
+    border-radius: 40px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .category-pills a:hover,
+  .category-pills a.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+  }
+  .count {
+    font-size: 13px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 13px;
+    margin-bottom: 23px;
+  }
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .empty {
+    background: var(--cream);
+    padding: 45px;
+    text-align: center;
+  }
+  @media (max-width: 850px) {
+    .recipe-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .archive {
+      padding: 50px 20px;
+    }
+    .recipe-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

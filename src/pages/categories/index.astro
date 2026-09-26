@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoriesPage from '../../components/pages/CategoriesPage.svelte';
+import { getSiteContent } from '../../lib/content';
+const { categories, isDemo } = await getSiteContent();
+---
+
+<Layout
+  title="קטגוריות | אתר המתכונים של תמר"
+  description="מגלים מתכונים לפי סוג ארוחה, אפייה, סלטים וקינוחים."
+  noindex={isDemo}
+>
+  <CategoriesPage {categories} />
+</Layout>

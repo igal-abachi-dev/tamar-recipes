@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HomePage from '../components/pages/HomePage.svelte';
+import { getSiteContent, imageSrc } from '../lib/content';
+const { recipes, categories, settings, isDemo } = await getSiteContent();
+---
+
+<Layout
+  noindex={isDemo}
+  image={imageSrc((recipes.find((recipe) => recipe.featured) || recipes[0])?.image, 1200, 630)}
+>
+  <HomePage {recipes} {categories} {settings} {isDemo} />
+</Layout>

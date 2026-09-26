@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AboutPage from '../../components/pages/AboutPage.svelte';
+import { getSiteContent } from '../../lib/content';
+const { settings, isDemo } = await getSiteContent();
+---
+
+<Layout
+  title="על תמר | אתר המתכונים של תמר"
+  description={settings.aboutLead || 'הסיפור מאחורי המטבח והמתכונים של תמר.'}
+  noindex={isDemo || !settings.aboutBody?.length}
+>
+  <AboutPage {settings} />
+</Layout>

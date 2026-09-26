@@ -1,0 +1,118 @@
+@import '@fontsource-variable/assistant/wght.css';
+@import '@fontsource-variable/heebo/wght.css';
+:root {
+  --cream: #faf7ef;
+  --paper: #fffdf8;
+  --ink: #293329;
+  --muted: #697063;
+  --orange: #b66237;
+  --line: #dfded3;
+  --font-sans: 'Assistant Variable', Arial, sans-serif;
+  --font-display: 'Heebo Variable', 'Assistant Variable', Arial, sans-serif;
+  --max-width: 1220px;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-width: 320px;
+}
+main {
+  min-height: 50vh;
+}
+main:has(.kitchen-tools) {
+  padding-bottom: 80px;
+}
+.recipe-page .full-extra {
+  display: none;
+}
+.recipe-page:has(#full-view:checked) .full-extra {
+  display: block;
+}
+img,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+a {
+  color: var(--orange);
+}
+a:hover {
+  color: #924a27;
+}
+button,
+input {
+  font: inherit;
+}
+:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+.skip-link {
+  position: absolute;
+  top: -100px;
+  right: 20px;
+  background: var(--ink);
+  color: white;
+  padding: 10px 15px;
+  z-index: 100;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 10px;
+}
+@media print {
+  .site-header,
+  .site-footer,
+  .demo-label,
+  .recipe-end,
+  .breadcrumbs,
+  .related {
+    display: none !important;
+  }
+  .recipe-video,
+  .recipe-jump {
+    display: none !important;
+  }
+  .ingredients {
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  body {
+    color: #000;
+    background: white;
+  }
+  .recipe-page {
+    max-width: none;
+    padding: 0;
+  }
+  .hero {
+    display: none;
+  }
+  .recipe-body {
+    display: grid;
+    grid-template-columns: 34% 1fr;
+    gap: 5%;
+    padding-top: 20px;
+  }
+  .ingredients {
+    background: white;
+    border: 1px solid #ccc;
+  }
+  .method li {
+    break-inside: avoid;
+  }
+}
