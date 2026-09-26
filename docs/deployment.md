@@ -37,6 +37,15 @@ _type in ["recipe", "category", "siteSettings"]
 
 Keep the deploy hook URL private; anyone with it can trigger builds. Publish a test recipe and confirm that the host starts a build, the updated static page appears, and `robots.txt`, sitemap, canonical URL and structured data use the final domain. Deleting or unpublishing content must also trigger a rebuild.
 
+
+Leave "drafts" unchecked on the Sanity webhook. Otherwise every Studio autosave triggers a Vercel build. The filter should only fire on published documents.
+
+Settle category slugs before launch. They're in every URL. Enter the siteSettings and categories first, then recipes.
+
+Don't set PUBLIC_SITE_URL until the real domain is ready. Until then the site stays noindex,
+
+upload full-size originals, set the hotspot and fill in the alt text. The demo .webp images in public/images are AI-generated, so delete them once real content is in.
+
 ## Video playback check
 
 The recipe iframe uses the [YouTube privacy-enhanced embed address](https://support.google.com/youtube/answer/171780) and `referrerpolicy="strict-origin-when-cross-origin"`. The repository also sets a matching response header for Vercel (`vercel.json`) and Cloudflare Pages (`public/_headers`). Test an actual embedded video **inside a recipe page on the final HTTPS domain**; opening the bare `/embed/...` URL in a new tab does not provide the enclosing page's Referer and can show [YouTube error 153](https://support.google.com/youtube/answer/171780#zippy=%2Cprovide-a-http-referer-header-to-enable-video-playback). The page always includes an ordinary YouTube link as a fallback. Also confirm that the video owner allows embedding and that any unlisted video may be viewed by anyone with its link.
