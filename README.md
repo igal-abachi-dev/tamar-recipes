@@ -4,6 +4,18 @@
 
 > **Project status:** The site and editor schemas are implemented. Without a Sanity project ID, the repository builds with clearly labeled sample recipes. Those pages are `noindex`, and `robots.txt` disallows crawling. A public launch still needs Tamar-approved recipes and photos, a Sanity project, a final domain, and a publish-to-rebuild webhook.
 
+## How it works
+
+| Layer    | Responsibility                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Astro    | Routes, build-time Sanity queries, static pages, metadata, and structured data                    |
+| Svelte 5 | Page views and reusable interface components; only search and recipe tools hydrate in the browser |
+| Sanity   | Recipe, category, and site settings documents; a separately hosted editing Studio                 |
+| Video    | YouTube embeds first; optional Mux video when a recipe has no YouTube video                       |
+| Styling  | Project CSS tokens and self-hosted Assistant and Heebo fonts                                      |
+
+Publishing a Sanity document does not change an already deployed static page. A Sanity webhook must call the hosting provider's deploy hook to rebuild the site. Draft previews read Sanity on request and do not wait for a rebuild.
+
 ## What is included
 
 - **Recipe discovery:** category pages, a searchable archive, and filters for vegetarian, gluten-free, lactose-free, and Passover recipes. Search includes ingredient names and supports Hebrew substring matching.
@@ -27,29 +39,8 @@ Ghost is a full publishing platform for websites, newsletters, memberships, paid
 - A print-optimized recipe layout and static recipe pages that keep ingredients and instructions readable without JavaScript.
 
 Ghost has broader publishing and audience tools that this project intentionally leaves out, as recorded in [plan.md](plan.md):
+Ghost is designed to run a publication and its audience; this site is designed to help readers find and cook Tamar's recipes.
 
-| Ghost capability | This project | Current scope |
-| --- | --- | --- |
-| Members and paid subscriptions | Not included | Out of scope |
-| Native email newsletters | Not included | Out of scope |
-| Member comments | Not included | Out of scope |
-| ActivityPub and social publishing | Not included | Out of scope |
-| Member portal and signup | Not included | Out of scope |
-| Built-in audience analytics | Not included | Could be added separately if wanted |
-
-The trade-off is straightforward: Ghost is designed to run a publication and its audience; this site is designed to help readers find and cook Tamar's recipes.
-
-## How it works
-
-| Layer    | Responsibility                                                                                    |
-| -------- | ------------------------------------------------------------------------------------------------- |
-| Astro    | Routes, build-time Sanity queries, static pages, metadata, and structured data                    |
-| Svelte 5 | Page views and reusable interface components; only search and recipe tools hydrate in the browser |
-| Sanity   | Recipe, category, and site settings documents; a separately hosted editing Studio                 |
-| Video    | YouTube embeds first; optional Mux video when a recipe has no YouTube video                       |
-| Styling  | Project CSS tokens and self-hosted Assistant and Heebo fonts                                      |
-
-Publishing a Sanity document does not change an already deployed static page. A Sanity webhook must call the hosting provider's deploy hook to rebuild the site. Draft previews read Sanity on request and do not wait for a rebuild.
 
 ## Set up with an agent
 
