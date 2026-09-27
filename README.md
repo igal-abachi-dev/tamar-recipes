@@ -26,6 +26,27 @@ The public site has no accounts, comments, contact form, or embedded administrat
 
 Publishing a Sanity document does not change an already deployed static page. A Sanity webhook must call the hosting provider's deploy hook to rebuild the site. Draft previews read Sanity on request and do not wait for a rebuild.
 
+## Set up with an agent
+
+For cooks who do not code, open the repository folder in a desktop coding agent and give it one setup request. The agent should install or guide you through installing the prerequisites, connect the accounts, configure this existing project, and deploy it. You handle sign-in, two-factor checks, and approvals on the providers' own pages; you do not need to edit code. See the [agent setup guide](docs/agent-setup.md) for the full flow.
+
+| Agent | Fit for this setup | Trade-off |
+| --- | --- | --- |
+| **Codex desktop app — recommended** | Free ChatGPT accounts include limited Codex usage. Open the local project folder and let the agent work with its files and terminal; it is a chat-style coding agent, not an IDE you need to use. | Free usage is limited and varies by account and task. |
+| **Claude Code Desktop** | Dedicated Code workspace for a local project, with visible changes and approvals. | Claude Code requires a Pro/Max subscription or billed Console access, so it is not the free choice. |
+| **Cursor Agent** | Free Hobby tier includes limited Agent requests and no credit card is required. The project skill is discovered automatically. | Cursor is a code editor/IDE, which adds interface non-coders may not want. |
+| **Grok Build on web** | Available on Grok plans; describe an app and publish it from chat. | It builds and hosts a Grok app, then can export it to GitHub. It is not the direct path for setting up this existing repo on Vercel with Sanity. |
+
+### Performance, app vs CLI, and context
+
+A same-model comparison is more useful than comparing each vendor's best model. On Composio's 30-task harness benchmark, Codex and Claude Code both ran GPT-6 Astra: Codex passed 21/29 tasks (72.4%) and Claude Code 20/29 (69%). The page does not show matched reasoning effort or repeated trials, so treat this as a near tie rather than proof that one agent is better. It does not compare the free plans or Cursor Hobby. The recommendation above is based mainly on setup fit and access, not a claimed coding-performance win. ([benchmark and method](https://composio.dev/bench/compare/harnesses))
+
+The desktop app is the easiest way to open the project folder, give the prompt, watch progress, and approve changes. A CLI runs in a terminal and is better for developers who want scripts and direct command control; the owner should not have to use it for this setup. The app and CLI can have different session histories and available tools even when they use the same agent. Give either one the repository root so it can find `AGENTS.md`, the setup skill, and project files. The agent's working context comes from that folder, the prompt, the selected skill, and its current conversation; switching to a cloud workspace or another folder changes what it can see.
+
+Copy this prompt into the agent after opening the repository:
+
+> I’m a cook, not a developer. Set up and deploy this recipe site for me by following `docs/agent-setup.md` and using the `recipe-site-setup` skill if available. First inspect the project and tell me what is already done. Check whether Node.js 22.12+, Git, and pnpm 10.17.0 are installed; install or guide me through installing anything missing, using the official instructions for my computer. Then help me create or sign in to GitHub, Vercel, and Sanity, connect them, deploy the public site and its existing Sanity Studio, and verify publishing triggers a site rebuild. Do the file and command work yourself. Explain each step simply and pause only when I need to sign in, approve access, choose an account/hostname, or approve recipe content. I will enter passwords, verification codes, tokens, and deploy-hook URLs directly in the provider's own pages; never ask me to paste them into chat or put secrets in code or scripts. Keep sample content noindexed until I approve the real site for launch. Start with the earliest incomplete step and preserve anything already configured.
+
 ## Run locally
 
 **Requirements:** Node.js 22.12 or newer and pnpm 10.17.0 (the version in `package.json`).
