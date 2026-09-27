@@ -69,6 +69,75 @@ In Vercel, open Settings → Git → Deploy Hooks and create a hook for the prod
 Once the Sanity project and final domain are ready, add PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET, and PUBLIC_SITE_URL in Vercel, then redeploy.
 
 
+ skip both optional integrations in vercel , and continue with the project setup.
+
+## web hook setup
+
+The build finished and your site is live at sitename.vercel.app. You can create the hook now and save it for when Sanity is set up.
+
+In Vercel, open the tamar-recipes project.
+
+Go to Settings → Git.
+
+Find Deploy Hooks and choose Create Hook.
+
+Give it a name, such as sanity-production-publish.
+
+Set the branch to main—that’s the branch Vercel built from.
+
+Create the hook and copy its generated URL. Keep it private; because anyone with it can trigger a deployment.
+
+Save the URL somewhere private. not git, and Later, in your Sanity project, create a webhook for the production dataset and paste the Vercel URL as its destination. 
+Configure it to use POST and trigger on create, update, and delete for published documents.
+
+
+
+## 2. Create your Sanity account and project
+
+Go to sanity.io and create an account. Sign in.
+
+
+
+Open the Sanity project dashboard and create a project. 
+choose knowledge base,
+Give it a name such as Tamar Recipes.,
+choose Astro
+
+
+Are you adding Sanity to an existing site or app?
+choose Yes(we have existing schema in code)
+
+
+Are you migrating from another CMS?
+choose, No, starting from scratch
+
+Create a dataset named production and set its visibility to Public. The website needs to read published recipe data during each Vercel build. A public dataset lets it read that content without a token; Sanity explains that public datasets can be queried by anyone. Sanity datasets
+
+In the project settings, copy the Project ID. Keep the project ID and dataset name handy. The dataset name is production.
+
+## 3. Connect the project to Vercel
+
+In Vercel, open the tamar-recipes project.
+
+Go to Settings → Environment Variables.
+
+Add these two variables, with Production selected as the environment:
+
+    Name                        Value
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━
+    PUBLIC_SANITY_PROJECT_ID    Your Sanity Project ID
+   ──────────────────────────  ────────────────────────
+    PUBLIC_SANITY_DATASET       production
+
+Save the variables.
+
+Go to Deployments, open the menu for the latest production deployment, and choose Redeploy. If Vercel asks whether to use the existing build cache, either choice is okay here.
+
+Wait for the redeploy to finish. That connects the website’s build to Sanity. The Studio still needs to be deployed separately in step 4, using the same Project ID and dataset.
+
+Leave PUBLIC_SITE_URL unset until you have the final domain, as your guide instructs; or if domain is vercel.app , then add it, the site should remain noindex in the meantime. Don’t add SANITY_READ_TOKEN now—that is only needed if you later set up draft preview.
+
+
 
 
 ### Draft preview
