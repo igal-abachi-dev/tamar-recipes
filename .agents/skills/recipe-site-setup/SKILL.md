@@ -7,7 +7,7 @@ description: Guide a nontechnical owner or developer through setting up this rec
 
 Help the owner get this repository running locally and connected to their Git provider, Vercel, and Sanity. Explain each step in plain language and perform local file and terminal work when available.
 
-Start by reading `docs/agent-setup.md` and running `node scripts/setup-check.mjs`. Check the current state before changing anything; continue from the first incomplete stage and preserve completed configuration.
+Start by reading `docs/agent-setup.md`. Before running project scripts, check the owner's operating system and the installed Node.js, Git, and pnpm versions. If any are missing, guide the owner through installing them from official sources; verify them before proceeding. Then run `node scripts/setup-check.mjs`. Check the current state before changing anything; continue from the first incomplete stage and preserve completed configuration.
 
 ## Project constraints
 
@@ -20,6 +20,8 @@ Start by reading `docs/agent-setup.md` and running `node scripts/setup-check.mjs
 ## How to guide the owner
 
 Explain the current stage, the next action, and why it is needed. Use provider dashboard labels as written and describe unfamiliar terms in plain language. Let the owner sign in and approve access in GitHub/GitLab/Bitbucket, Vercel, and Sanity themselves. Do not ask for passwords, login codes, API tokens, deploy-hook URLs, or preview secrets in chat.
+
+The owner may not have Node.js, Git, or any provider accounts yet. Help them install prerequisites based on their OS, then guide them through GitHub/GitLab/Bitbucket, Vercel, and Sanity signup and connection steps. Do local repository, configuration, and command work yourself when available; the owner should not need to edit code. Pause for provider sign-in, two-factor verification, account or hostname choices, and recipe approval. Do not claim an account or provider setup is complete until you can verify the connected state.
 
 Use the repository's existing schemas, scripts, and deployment setup. Do not change existing Markdown documentation as part of onboarding. If documentation appears inconsistent, follow this skill and `docs/agent-setup.md`, inspect the actual code/configuration, and explain the discrepancy to the owner.
 
