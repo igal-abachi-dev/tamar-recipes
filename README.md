@@ -30,6 +30,65 @@ Publishing a Sanity document does not change an already deployed static page. A 
 
 For cooks who do not code, open the repository folder in a desktop coding agent and give it one setup request. The agent should install or guide you through installing the prerequisites, connect the accounts, configure this existing project, and deploy it. The agent can use its built-in terminal; you do not need to open a command line or edit code. You handle sign-in, two-factor checks, and approvals on the providers' own pages. See the [agent setup guide](docs/agent-setup.md) for the full flow.
 
+### Start on a new Windows PC
+
+The cook only needs Windows, Chrome, and an internet connection to begin. 
+They do not need Git, GitHub, Node.js, pnpm, or an AI agent installed yet. 
+
+Send them this message:
+
+> Here’s the recipe-site starter: https://github.com/igal-abachi-dev/tamar-recipes . 
+On your Windows PC, 
+install the [ChatGPT desktop app](https://chatgpt.com/download/) 
+and choose Codex (Free has limited use; paid plans include more). 
+
+If you already have Claude Pro or Max, 
+you can use [Claude Desktop](https://claude.com/download/) and its Code tab instead. 
+
+
+In Chrome, open the repository(https://github.com/igal-abachi-dev/tamar-recipes) 
+and choose **Code → Download ZIP**. 
+In File Explorer, right-click the downloaded ZIP in **Downloads**, 
+choose **Extract All**, then **Extract**. 
+
+Open the extracted `tamar-recipes-main` folder as a local project in your chosen agent,
+
+Copy this prompt into the agent after opening the repository:
+
+> I’m a cook, not a developer. Set up and deploy this recipe site for me by following `docs/agent-setup.md` and using the `recipe-site-setup` skill if available. First inspect the project and tell me what is already done. Check whether Node.js 22.12+, Git, and pnpm 10.17.0 are installed; install or guide me through installing anything missing, using the official instructions for my computer. Then help me create or sign in to GitHub, Vercel, and Sanity, connect them, deploy the public site and its existing Sanity Studio, and verify publishing triggers a site rebuild. Do the file and command work yourself. Explain each step simply and pause only when I need to sign in, approve access, choose an account/hostname, or approve recipe content. I will enter passwords, verification codes, tokens, and deploy-hook URLs directly in the provider's own pages; never ask me to paste them into chat or put secrets in code or scripts. Keep sample content noindexed until I approve the real site for launch. Start with the earliest incomplete step and preserve anything already configured.
+
+The agent will guide the rest; you’ll sign in to or create GitHub, Vercel, and Sanity accounts when asked. You don’t need to write code or use a command line.
+
+The first-run sequence is: install a desktop agent, download the project ZIP(not git), 
+use File Explorer's built-in **Extract All** action, o
+pen the extracted folder locally, and submit the README setup prompt. 
+
+No extra ZIP utility is needed. The agent checks and installs or 
+guides you through installing Git, Node.js, and pnpm, 
+
+then helps put the project in your own GitHub repository and deploy it to Vercel and Sanity. 
+
+The owner completes account signup, sign-in, verification, and access approvals. 
+Enter passwords, verification codes, API tokens, and deploy-hook URLs 
+only in the provider's own sign-in page or dashboard, never in the agent conversation.
+
+
+#### Install a desktop agent
+
+**Codex desktop (recommended if you are starting with no AI account):**
+
+1. In Chrome, open [chatgpt.com/download](https://chatgpt.com/download/), download the ChatGPT app for Windows, and install it.
+2. Open ChatGPT and sign in or create a free account. Codex is available on Free and paid plans; usage limits vary, and paid plans include more usage.
+3. Choose **Codex** in the app, then open the extracted `tamar-recipes-main` folder as a local project.
+
+**Claude Code Desktop (if you already have Claude Pro or Max):**
+
+1. In Chrome, open [claude.com/download](https://claude.com/download/), download Claude for Windows, and install it.
+2. Open Claude and sign in with the account that has Pro or Max. Claude's Free plan does not include Code.
+3. Choose the **Code** tab, start a local session, and select the extracted `tamar-recipes-main` folder.
+
+Then copy the prompt below into the agent. Both apps provide a built-in terminal the agent can use; the cook does not need to open PowerShell or Command Prompt. If the app offers folder-access choices, grant access to the extracted project folder only.
+
 **This is a desktop usability shortlist for local setup, not a coding-quality leaderboard.** Start with Codex or Claude Code if you already pay for ChatGPT or Claude. Cursor and Factory are other local desktop options if you prefer their workspace or want a separate product.
 
 | Agent | Fit for this setup | Trade-off |
@@ -50,10 +109,6 @@ Muse Code's current Artificial Analysis comparison uses different best-available
 The CLI can feel more capable for command-heavy work because it works directly in a terminal: it can run scripts, inspect their output, and continue with fewer interface steps. Desktop apps vary: some provide the same terminal tools along with visual change review and approvals; others expose fewer tools. That can affect practical agentic ability, but CLI versus desktop does not inherently change the model's context-window limit. The model and plan set that limit. A lean CLI may use less context for interface instructions, while a desktop app may add useful project or review context. For this setup, use the desktop app with the local repository open and terminal access enabled. Give it the repository root so it reads `AGENTS.md`, the setup skill, and project files. The cook does not need to use a CLI.
 
 Official product references: [Codex plans](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan), [Claude Code Desktop](https://code.claude.com/docs/en/desktop), [Factory App](https://docs.factory.ai/factory-app/quickstart) and [pricing](https://factory.com/pricing), [Cursor pricing](https://cursor.com/pricing), [Grok Build](https://github.com/xai-org/grok-build), [Grok Bot setup](https://docs.x.ai/grok-bot/get-started), [Muse Code](https://dev.meta.ai/docs/muse-code), [Amp](https://ampcode.com/docs), [Oh My Pi](https://github.com/can1357/oh-my-pi).
-
-Copy this prompt into the agent after opening the repository:
-
-> I’m a cook, not a developer. Set up and deploy this recipe site for me by following `docs/agent-setup.md` and using the `recipe-site-setup` skill if available. First inspect the project and tell me what is already done. Check whether Node.js 22.12+, Git, and pnpm 10.17.0 are installed; install or guide me through installing anything missing, using the official instructions for my computer. Then help me create or sign in to GitHub, Vercel, and Sanity, connect them, deploy the public site and its existing Sanity Studio, and verify publishing triggers a site rebuild. Do the file and command work yourself. Explain each step simply and pause only when I need to sign in, approve access, choose an account/hostname, or approve recipe content. I will enter passwords, verification codes, tokens, and deploy-hook URLs directly in the provider's own pages; never ask me to paste them into chat or put secrets in code or scripts. Keep sample content noindexed until I approve the real site for launch. Start with the earliest incomplete step and preserve anything already configured.
 
 ## Run locally
 
