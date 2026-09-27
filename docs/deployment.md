@@ -371,6 +371,40 @@ Redeploy Vercel so its server function picks up SANITY_READ_TOKEN and PREVIEW_SE
 The preview should show that draft on your Vercel site. After editing and saving the draft, use רענון התצוגה to see the latest version. Draft edits shouldn’t trigger a Vercel build because the webhook is set to ignore drafts.
 
 
+## site details defaults
+
+To match the local site, enter these temporary values in פרטי האתר:
+
+כותרת ראשית: האוכל הכי טוב מתחיל בבית.
+
+פתיח לעמוד הבית: מתכונים כשרים אהובים, טעמים של משפחה, וכל הסיבות הטובות להתכנס שוב סביב השולחן.
+
+שורת תיאור / tagline: פשוט להכין. כיף לחלוק.
+
+פתיח אודות: המקום הזה נולד כדי לאסוף את המתכונים שמחזירים אותנו הביתה — ולתת להם בית שאפשר לחזור אליו בכל פעם שמתחשק לבשל.
+
+תוכן אודות: בקרוב תמר תספר כאן את הסיפור שלה במילים שלה: על המטבח, האנשים והמנות שהיא הכי אוהבת להכין.
+
+The local version shows a star illustration where a portrait would go. Studio currently requires a portrait image and alt text before you can publish פרטי האתר. To keep the same look, you’ll need to leave it as a draft until Tamar’s portrait is ready, or use a temporary image knowing the About page will look different.
+
+Create these four categories. Set סדר to the numbers shown so they appear in the same order:
+
+ שם                Slug           תיאור                                 סדר
+━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━
+ ארוחות עיקריות    main-dishes    המנות שמרכזות את כולם סביב השולחן.      1
+────────────────  ─────────────  ────────────────────────────────────  ─────
+ אפייה ולחמים      baking         ריח של בית שיוצא מהתנור.                2
+────────────────  ─────────────  ────────────────────────────────────  ─────
+ סלטים ותוספות     salads         צבע, רעננות וכל מה שבצד.                3
+────────────────  ─────────────  ────────────────────────────────────  ─────
+ קינוחים           desserts       משהו מתוק לסיים איתו.                   4
+
+For each category image, use the corresponding local demo image 
+if you want the same appearance: category-main-dishes.webp, challah.webp, salad.webp, and cake.webp. Add the matching alt text: לזניה ביתית בתבנית אפייה, חלות טריות, סלט ירקות טרי, and עוגת תפוזים ביתית.
+
+One more thing: these settings and categories alone won’t make the whole homepage match local dev. The homepage also needs the four demo recipes from the local project. Until Tamar reviews the temporary content, keep the site noindexed as the guide specifies.
+
+
 ### Draft preview
 
 1. Create a Sanity API token with **Viewer** access to the dataset. Set it on Vercel as `SANITY_READ_TOKEN` for the server function. It must not start with `PUBLIC_`.
