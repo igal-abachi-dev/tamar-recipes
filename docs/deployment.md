@@ -17,6 +17,20 @@ An [unlisted YouTube video](https://support.google.com/youtube/answer/157177?hl=
 
 The build also writes `llms.txt` as a short map of the public static recipe pages. Full ingredients and instructions remain in each page's HTML and Recipe JSON-LD; the search and cooking controls are optional enhancements.
 
+
+## step by step:
+----
+1. Deploy the public site to Vercel using the repo’s deployment guide. The site can go up before you have a Sanity account; it will use the demo content, which the project instructions say should stay noindexed.
+
+2. Create a Sanity account and project. Keep the Studio on Sanity’s hosting; Vercel is only for the public website.
+
+3. Connect the project to Sanity. Add the Sanity project ID and dataset where the deployment guide says, then redeploy the site on Vercel so Astro can build with Sanity content.
+
+4. Deploy the Studio to Sanity’s hosting and use its URL to manage recipes.
+
+5. Set up a Sanity webhook to trigger a Vercel redeploy when published content changes, since the site is statically generated.
+
+
 ## Hosting choice
 
 ### Vercel
@@ -24,6 +38,38 @@ The build also writes `llms.txt` as a short map of the public static recipe page
 Connect the repository to a Vercel project using the Astro framework preset. Set the build command to `pnpm build` and let the adapter provide `.vercel/output`; do not override the output directory with `dist`. Set `PUBLIC_SITE_URL`, `PUBLIC_SANITY_PROJECT_ID`, and `PUBLIC_SANITY_DATASET`. In project **Settings → Git → Deploy Hooks**, create a hook for the production branch.
 
 The draft preview uses a Vercel function. A plain Cloudflare Pages static deployment can still serve the published pages, but it cannot serve the draft preview route from this configuration.
+
+## 1. Deploy the public site to Vercel
+
+You can do this before creating a Sanity account. The site will use demo content, which stays noindex until you configure the real domain and launch content.
+
+Push the repository to GitHub if it isn’t there already. Vercel will import the project from GitHub.
+
+Create a Vercel account at vercel.com and choose Add New → Project.
+
+Import the tamar-recipes repository and select the Astro framework preset.
+
+Set the build settings:
+Build command: pnpm build
+Node.js version: 22.12 or newer
+Leave the output directory as Vercel’s default. The Astro adapter creates .vercel/output; don’t set it to dist.
+
+Add the environment variables in the project setup, or afterward under Settings → Environment Variables:
+PUBLIC_SITE_URL: leave unset until the real domain is ready.
+PUBLIC_SANITY_PROJECT_ID and PUBLIC_SANITY_DATASET: leave unset until you create the Sanity project.
+
+You can deploy the demo site without those values. Don’t add a Sanity token yet; it isn’t needed for this first deployment.
+
+Deploy and wait for the build to finish. Vercel will give you a preview URL such as tamar-recipes-….vercel.app.
+
+Open the Vercel URL and check that the site loads. At this stage it is a demo deployment, not the final public launch; it should remain noindex.
+
+In Vercel, open Settings → Git → Deploy Hooks and create a hook for the production branch. Save the hook URL somewhere private. You’ll add it to Sanity later so publishing recipe changes triggers a rebuild.
+
+Once the Sanity project and final domain are ready, add PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET, and PUBLIC_SITE_URL in Vercel, then redeploy.
+
+
+
 
 ### Draft preview
 
