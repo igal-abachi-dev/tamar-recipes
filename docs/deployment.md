@@ -175,6 +175,7 @@ parent-folder/ # run your agent from here
 Agent prompt
 Set up Sanity using the `sanity-best-practices` skill's `getting-started` reference.
 
+https://github.com/sanity-io/agent-toolkit/blob/main/skills/sanity-best-practices/SKILL.md (has 3 references for it, in How to Use, section)
 If the skill can't be found, install it by running `npx skills add sanity-io/agent-toolkit --skill sanity-best-practices -y`. If the install fails, stop and ask me to run it.
 
 Context:
@@ -219,9 +220,43 @@ There is one separate warning in your Vercel log: engines.node is set to >=22.12
 pnpm install --frozen-lockfile
 pnpm sanity:dev
 
-Open http://localhost:3333 to check the Studio. Then stop it with Ctrl+C and deploy it:
+Open http://localhost:3333 to check the Studio. 
+Then stop it with Ctrl+C and deploy it:
 
+
+do login: 
+pnpm exec sanity login
+
+then:
 pnpm sanity:deploy
+
+Choose a hostname prefix for the Studio URL, for example:
+
+tamar-recipes
+
+
+------------
+
+
+after The Studio deployed successfully
+
+Next:
+
+
+Connect the Vercel deploy hook in Sanity: 
+in Sanity Manage, create a webhook for the production dataset. 
+
+Paste in your private Vercel hook URL, set method to POST, select create, update, and delete, and use this filter:
+
+_type in ["recipe", "category", "siteSettings"]
+
+Leave drafts unchecked so draft edits don’t trigger builds.
+
+Open the Studio URL and create פרטי האתר first, then categories, then Tamar-approved recipes and photos.
+
+Publish a recipe and confirm Sanity triggers a Vercel build and the updated recipe appears on the site.
+
+One launch detail: with PUBLIC_SITE_URL and the Sanity project ID set, the site’s current robots rules allow crawling. Since content is still being prepared, I recommend temporarily removing PUBLIC_SITE_URL from Vercel until the approved content is ready; add it back for launch.
 
 
 ### Draft preview
