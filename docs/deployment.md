@@ -2,7 +2,7 @@
 
 The public recipe and category pages are static. One Vercel function renders authenticated draft recipe previews on request. Sanity hosts the editing Studio separately at a `*.sanity.studio` address; there is no public admin route on the Astro site. Published recipe data is read from Sanity during each site build.
 
-Before launch, Tamar needs to enter approved recipes, photos, and About copy. A real Sanity project, domain, host, and publish-to-rebuild webhook must also be connected.
+Before launch, Tamar needs to enter approved recipes, photos, and About copy. A real Sanity project, domain(optional, can use vercel), host, and publish-to-rebuild webhook must also be connected.
 
 ## Before the first public build
 
@@ -71,7 +71,7 @@ Once the Sanity project and final domain are ready, add PUBLIC_SANITY_PROJECT_ID
 
  skip both optional integrations in vercel , and continue with the project setup.
 
-## web hook setup
+## web hook setup in vercel
 
 The build finished and your site is live at sitename.vercel.app. You can create the hook now and save it for when Sanity is set up.
 
@@ -257,6 +257,112 @@ Open the Studio URL and create פרטי האתר first, then categories, then Ta
 Publish a recipe and confirm Sanity triggers a Vercel build and the updated recipe appears on the site.
 
 One launch detail: with PUBLIC_SITE_URL and the Sanity project ID set, the site’s current robots rules allow crawling. Since content is still being prepared, I recommend temporarily removing PUBLIC_SITE_URL from Vercel until the approved content is ready; add it back for launch.
+
+## webhook sanity connection
+
+In Sanity, open sanity.io/manage, select Tamar Recipes, then go to API → Webhooks → Create webhook. Sanity’s docs place webhook management in the project’s API settings. Webhook docs
+
+Fill in:
+
+Name: vercel-production-rebuild
+
+URL: paste the private Deploy Hook URL you saved from Vercel
+
+Dataset: production
+
+HTTP method: POST
+
+Trigger on: Create, Update, and Delete
+
+Filter:
+
+_type in ["recipe", "category", "siteSettings"]
+
+Drafts: leave unchecked/off
+
+Save the webhook. Keep its URL private.
+
+## whats next
+
+now the public site is on Vercel, the Sanity project and dataset are connected, Studio is deployed at name.sanity.studio, and the Sanity webhook is connected
+
+
+ open your Studio and add content in this order:
+
+פרטי האתר — enter Tamar-approved homepage and About copy, and the portrait with alt text.
+Categories — settle each category’s Latin slug before publishing.
+Recipes — add Tamar-approved recipes, photos with alt text, ingredients, and steps.
+
+
+
+In Studio, fill פרטי האתר first, then categories, then Tamar-approved recipes, photos with alt text, and YouTube links. Publishing those documents should trigger Vercel to rebuild the static site.
+
+Since PUBLIC_SITE_URL is set, the site can be crawled. If the content isn’t ready for search engines, temporarily remove that variable in Vercel and redeploy; restore it when you’re ready to launch.
+
+
+You don’t need to add the Studio project ID or dataset to Vercel; 
+those are for the local Studio build. 
+and The webhook URL is stored in Sanity
+
+
+
+Sanity automatically gives new projects a 30-day Growth trial. You won’t be charged just because the trial ends. If you don’t upgrade or add payment details, Sanity says the project automatically moves to Free. Growth trial details
+The Free plan should work for this site: you have a public production dataset, and Free includes hosted Studio. At the end of the trial, you’ll lose Growth-only features such as scheduled drafts, comments, and private datasets. Regular editing and publishing can continue.
+You can leave it as it is and let the trial expire
+
+
+The two secrets belong in Vercel, but SANITY_STUDIO_PREVIEW_URL must also be present when the Studio is built and deployed to Sanity. I’ll add your Vercel site URL to the local ignored .env; then the Studio needs redeploying to pick it up.
+
+
+SANITY_READ_TOKEN — use a Sanity token with Viewer access to production.
+PREVIEW_SECRET — use a long, random secret.
+
+Keep both server-only; don’t prefix them with PUBLIC_.
+
+SANITY_STUDIO_PREVIEW_URL is different: Vercel setting it doesn’t configure the Studio you deployed on Sanity. I added https://tamar-recipes.vercel.app to your local .env for the Studio build. That file is Git-ignored. Now:
+
+In Sanity Manage, go to Tamar Recipes → Settings → API settings → CORS Origins. Add https://tamar-recipes.vercel.app and enable Allow credentials.
+
+From the repo root, run pnpm sanity:deploy again to publish the Studio with the preview URL.
+
+Redeploy the Vercel production deployment so its server function picks up the new secrets. Vercel environment-variable changes apply to new deployments. Vercel environment variables
+
+In the Studio, test תצוגה מקדימה with a draft recipe.
+
+You also added SANITY_STUDIO_PREVIEW_URL in Vercel. It’s harmless there, but the local .env value is what the Sanity Studio deploy needs. Sanity requires the site origin in CORS for Presentation preview. Sanity Presentation setup, Sanity CORS settings
+
+
+
+
+Those two Vercel fields need actual secrets. I didn’t fill them, and I can’t see their values. Don’t paste either value here.
+
+Create the read token in Sanity: go to Sanity Manage → Tamar Recipes → Settings → API → Tokens → Add API token. Name it something like Vercel draft preview, choose Viewer, and save. Copy the token when Sanity shows it; it’s only displayed once. Sanity token instructions
+
+In Vercel, open Settings → Environment Variables. Set SANITY_READ_TOKEN to that copied token.
+
+Generate a separate random secret in PowerShell:
+
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
+
+Set PREVIEW_SECRET to the output. Don’t use the Sanity token as this secret.
+
+Select Production and Preview for both Vercel variables, save, and redeploy the latest production deployment. Vercel only applies changed variables to new deployments. Vercel environment variables
+
+
+Sanity doesn’t need this secret. It sends a short-lived preview request to your site; the Vercel function uses PREVIEW_SECRET to sign the temporary preview cookie. Keep it private and out of Git.
+
+
+
+
+
+ Running pnpm sanity:deploy again updates the existing Studio at name.sanity.studio. It won’t recreate the project, erase content, or reset the webhook or CORS settings.
+
+For draft preview, you only need to apply the new settings:
+
+Deploy the Studio again so it picks up SANITY_STUDIO_PREVIEW_URL from your local .env.
+
+Redeploy Vercel so its server function picks up SANITY_READ_TOKEN and PREVIEW_SECRET. Vercel applies changed environment variables to new deployments only. Vercel environment variables
+
 
 
 ### Draft preview
