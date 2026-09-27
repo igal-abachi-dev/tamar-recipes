@@ -12,10 +12,20 @@ const hasSanity = Boolean(
 const hasLiveSiteUrl = Boolean(
   env.PUBLIC_SITE_URL && env.PUBLIC_SITE_URL !== 'https://example.com',
 );
+const indexingEnabled = hasSanity && hasLiveSiteUrl && env.PUBLIC_SITE_INDEXING_ENABLED === 'true';
 
 export default defineConfig({
   site: env.PUBLIC_SITE_URL || 'https://example.com',
-  integrations: [svelte(), ...(hasSanity && hasLiveSiteUrl ? [sitemap()] : [])],
+  integrations: [
+    svelte(),
+    ...(indexingEnabled
+      ? [
+          sitemap({
+            filter: (page) => !['/about/', '/rss.xml'].includes(new URL(page).pathname),
+          }),
+        ]
+      : []),
+  ],
   adapter: vercel(),
   output: 'static',
 });

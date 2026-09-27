@@ -23,13 +23,19 @@ const {
   jsonLd,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const shouldNoindex =
-  noindex ||
-  !import.meta.env.PUBLIC_SITE_URL ||
-  import.meta.env.PUBLIC_SITE_URL === 'https://example.com';
-const settings = Astro.url.pathname.startsWith('/preview/')
-  ? await getSiteSettings()
-  : (await getSiteContent()).settings;
+const { recipes, categories, settings } = Astro.url.pathname.startsWith('/preview/')
+  ? { recipes: [], categories: [], settings: await getSiteSettings() }
+  : await getSiteContent();
+const indexingEnabled = Boolean(
+  import.meta.env.PUBLIC_SANITY_PROJECT_ID &&
+  import.meta.env.PUBLIC_SANITY_PROJECT_ID !== 'your-project-id' &&
+  import.meta.env.PUBLIC_SITE_URL &&
+  import.meta.env.PUBLIC_SITE_URL !== 'https://example.com' &&
+  import.meta.env.PUBLIC_SITE_INDEXING_ENABLED === 'true' &&
+  recipes.length > 0 &&
+  categories.length > 0,
+);
+const shouldNoindex = noindex || !indexingEnabled;
 ---
 
 <!doctype html>
@@ -49,6 +55,7 @@ const settings = Astro.url.pathname.startsWith('/preview/')
     <meta property="og:url" content={canonical.href} />
     {image && <meta property="og:image" content={new URL(image, Astro.site).href} />}
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title="אתר המתכונים של תמר" href="/rss.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {
       jsonLd && (

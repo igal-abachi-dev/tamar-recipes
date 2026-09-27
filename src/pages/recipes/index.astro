@@ -1,10 +1,10 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import RecipesPage from "../../components/pages/RecipesPage.svelte";
-import RecipeSearch from "../../components/islands/RecipeSearch.svelte";
-import { getSiteContent, imageSrc } from "../../lib/content";
-import type { RecipeSearchItem } from "../../types/content";
-import { allIngredientGroups, passoverStatus } from "../../lib/recipe-helpers";
+import Layout from '../../layouts/Layout.astro';
+import RecipesPage from '../../components/pages/RecipesPage.svelte';
+import RecipeSearch from '../../components/islands/RecipeSearch.svelte';
+import { getSiteContent, imageSrc } from '../../lib/content';
+import type { RecipeSearchItem } from '../../types/content';
+import { allIngredientGroups, passoverStatus } from '../../lib/recipe-helpers';
 const { recipes, categories, isDemo } = await getSiteContent();
 const index: RecipeSearchItem[] = recipes.map((recipe) => ({
   title: recipe.title,
@@ -13,9 +13,7 @@ const index: RecipeSearchItem[] = recipes.map((recipe) => ({
   imageUrl: imageSrc(recipe.image, 360, 270),
   categoryTitle: recipe.category?.title,
   tags: recipe.tags || [],
-  ingredients: allIngredientGroups(recipe).flatMap((group) =>
-    group.items.map((item) => item.name),
-  ),
+  ingredients: allIngredientGroups(recipe).flatMap((group) => group.items.map((item) => item.name)),
   dietaryLabels: recipe.dietaryLabels || [],
   passoverStatus: passoverStatus(recipe),
 }));

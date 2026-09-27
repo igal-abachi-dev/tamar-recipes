@@ -407,6 +407,11 @@ One more thing: these settings and categories alone won’t make the whole homep
 Content — publish a few real Tamar-approved recipes + categories + About text
 Photos — replace or supplement stock-looking hero assets with hers where it matters
 
+vercel:
+ PUBLIC_SITE_INDEXING_ENABLED=true
+
+Keep it unset or false for now. With your empty Sanity dataset, the site should remain noindexed; set it to true only once Tamar’s real content is reviewed and you’re ready for search engines, then redeploy. I’ll preserve that safe default while adding RSS.
+
 ### Draft preview
 
 1. Create a Sanity API token with **Viewer** access to the dataset. Set it on Vercel as `SANITY_READ_TOKEN` for the server function. It must not start with `PUBLIC_`.

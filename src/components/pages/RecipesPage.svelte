@@ -1,14 +1,14 @@
 <script lang="ts">
-  import RecipeCard from "../cards/RecipeCard.svelte";
-  import type { Recipe, Category } from "../../types/content";
+  import RecipeCard from '../cards/RecipeCard.svelte';
+  import type { Recipe, Category } from '../../types/content';
   let {
     recipes,
     categories,
-    title = "כל המתכונים",
-    description = "מה מתחשק להכין היום? כל המתכונים מחכים כאן, מסודרים בשבילכם.",
+    title = 'כל המתכונים',
+    description = 'מה מתחשק להכין היום? כל המתכונים מחכים כאן, מסודרים בשבילכם.',
     activeSlug,
     isDemo = false,
-    variant = "category",
+    variant = 'category',
     emptyMessage,
   }: {
     recipes: Recipe[];
@@ -17,12 +17,12 @@
     description?: string;
     activeSlug?: string;
     isDemo?: boolean;
-    variant?: "archive" | "category";
+    variant?: 'archive' | 'category';
     emptyMessage?: string;
   } = $props();
 </script>
 
-<div class="listing-page page-wrap" class:archive-page={variant === "archive"}>
+<div class="listing-page page-wrap" class:archive-page={variant === 'archive'}>
   {#if isDemo}<div class="demo-note">
       תוכן להמחשה בלבד — המתכונים והתמונות יוחלפו במתכונים של תמר.
     </div>{/if}

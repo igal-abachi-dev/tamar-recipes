@@ -10,9 +10,34 @@
 - **Cookable recipe pages:** grouped ingredients, component recipes, numbered steps, a short/full reading view, related recipes, print styles, and lazy YouTube embeds. Mux is available as an optional video source.
 - **Kitchen tools:** serving scaling, original/metric/US customary measures, multiple timers, a serving-time planner, cooking mode with saved progress, screen Wake Lock where supported, and sharing. Numeric ingredients scale; free-text amounts and notes stay as Tamar wrote them.
 - **Detailed editing model:** Sanity fields for time ranges, equipment, oven and burner settings, doneness targets, timelines, variations, storage, sources, kosher adaptations, and Tamar's own cooking notes. Simple recipes can leave advanced fields empty.
-- **Static publishing and draft preview:** crawlable published recipe HTML, canonical and social metadata, Recipe and Breadcrumb JSON-LD, `robots.txt`, `llms.txt`, and a sitemap when real content and a live site URL are configured. An authenticated Vercel function lets Tamar preview saved drafts in Sanity Presentation before publishing.
+- **Static publishing and draft preview:** crawlable published recipe HTML, canonical and social metadata, Recipe and Breadcrumb JSON-LD, `robots.txt`, `llms.txt`, and a sitemap when real content and a live site URL are configured and indexing is enabled. An authenticated Vercel function lets Tamar preview saved drafts in Sanity Presentation before publishing.
+- **RSS:** `/rss.xml` provides a feed of published recipes for feed readers and personal archives. Demo recipes and Sanity drafts are not included.
 
 The public site has no accounts, comments, contact form, or embedded administration route. Sanity Studio is deployed separately and uses Sanity's editor sign-in.
+
+## A focused recipe product, compared with Ghost
+
+Ghost is a full publishing platform for websites, newsletters, memberships, paid subscriptions, comments, and audience growth. Tamar's site is a focused recipe product: Sanity manages the content, while the public site turns structured recipe data into pages and cooking tools. Ghost can publish recipes too, but these recipe-specific capabilities would need custom development or integrations there:
+
+- Structured ingredient quantities with serving scaling and metric or US customary measures.
+- Component recipes and sub-recipes with their own ingredients and steps.
+- Cooking mode, step timers, screen Wake Lock, and a serving-time planner.
+- Kashrut, Passover, and dietary classifications designed for recipe browsing.
+- Oven modes, doneness targets, timelines, and recipe variations.
+- A print-optimized recipe layout and static recipe pages that keep ingredients and instructions readable without JavaScript.
+
+Ghost has broader publishing and audience tools that this project intentionally leaves out, as recorded in [plan.md](plan.md):
+
+| Ghost capability | This project | Current scope |
+| --- | --- | --- |
+| Members and paid subscriptions | Not included | Out of scope |
+| Native email newsletters | Not included | Out of scope |
+| Member comments | Not included | Out of scope |
+| ActivityPub and social publishing | Not included | Out of scope |
+| Member portal and signup | Not included | Out of scope |
+| Built-in audience analytics | Not included | Could be added separately if wanted |
+
+The trade-off is straightforward: Ghost is designed to run a publication and its audience; this site is designed to help readers find and cook Tamar's recipes.
 
 ## How it works
 

@@ -61,29 +61,31 @@
   </div>
 </section>
 
-<section class="category-section section-wrap" aria-labelledby="category-heading">
-  <div class="section-heading">
-    <div>
-      <span class="eyebrow">מה מתחשק היום?</span>
-      <h2 id="category-heading">לגלות לפי קטגוריה</h2>
+{#if categories.length}
+  <section class="category-section section-wrap" aria-labelledby="category-heading">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">מה מתחשק היום?</span>
+        <h2 id="category-heading">לגלות לפי קטגוריה</h2>
+      </div>
+      <a href="/categories">לכל הקטגוריות <span aria-hidden="true">←</span></a>
     </div>
-    <a href="/categories">לכל הקטגוריות <span aria-hidden="true">←</span></a>
-  </div>
-  <div class="category-grid">
-    {#each categories.slice(0, 4) as category}
-      <a class="category-tile" href={`/categories/${category.slug}`}>
-        {#if imageSrc(category.image, 580, 530) && !sameImage(category.image, hero?.image)}<img
-            src={imageSrc(category.image, 580, 530)}
-            alt={category.image?.alt || ''}
-            width="580"
-            height="530"
-            loading="lazy"
-          />{:else}<span class="tile-mark" aria-hidden="true">✳</span>{/if}
-        <span>{category.title}<b aria-hidden="true">↗</b></span>
-      </a>
-    {/each}
-  </div>
-</section>
+    <div class="category-grid">
+      {#each categories.slice(0, 4) as category}
+        <a class="category-tile" href={`/categories/${category.slug}`}>
+          {#if imageSrc(category.image, 580, 530) && !sameImage(category.image, hero?.image)}<img
+              src={imageSrc(category.image, 580, 530)}
+              alt={category.image?.alt || ''}
+              width="580"
+              height="530"
+              loading="lazy"
+            />{:else}<span class="tile-mark" aria-hidden="true">✳</span>{/if}
+          <span>{category.title}<b aria-hidden="true">↗</b></span>
+        </a>
+      {/each}
+    </div>
+  </section>
+{/if}
 
 {#if featured}
   <section class="featured section-wrap" aria-labelledby="featured-heading">
@@ -111,18 +113,20 @@
   </section>
 {/if}
 
-<section class="latest section-wrap" aria-labelledby="latest-heading">
-  <div class="section-heading">
-    <div>
-      <span class="eyebrow">שווה להכין</span>
-      <h2 id="latest-heading">מהמטבח לאחרונה</h2>
+{#if latest.length}
+  <section class="latest section-wrap" aria-labelledby="latest-heading">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">שווה להכין</span>
+        <h2 id="latest-heading">מהמטבח לאחרונה</h2>
+      </div>
+      <a href="/recipes">לכל המתכונים <span aria-hidden="true">←</span></a>
     </div>
-    <a href="/recipes">לכל המתכונים <span aria-hidden="true">←</span></a>
-  </div>
-  <div class="recipe-grid">
-    {#each latest as recipe}<RecipeCard {recipe} />{/each}
-  </div>
-</section>
+    <div class="recipe-grid">
+      {#each latest as recipe}<RecipeCard {recipe} />{/each}
+    </div>
+  </section>
+{/if}
 
 <section class="about-band section-wrap">
   <div class="about-mark" aria-hidden="true">✳</div>
