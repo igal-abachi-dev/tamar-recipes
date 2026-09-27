@@ -440,3 +440,37 @@ The recipe iframe uses the [YouTube privacy-enhanced embed address](https://supp
 On launch, test one mobile `m.youtube.com/watch?v=…` link and one `watch?si=…&v=…` link in Studio; both are accepted by the same parser used to render embeds. Check the final page with and without JavaScript, the print view, a long component recipe, and a simple recipe. The detailed entry and review guide is [editorial.md](editorial.md).
 
 Official references: [Sanity Studio deployment](https://www.sanity.io/docs/setup-and-deployment), [Sanity webhooks](https://www.sanity.io/docs/content-lake/webhooks), [Vercel deploy hooks](https://vercel.com/docs/deploy-hooks), [Cloudflare Pages deploy hooks](https://developers.cloudflare.com/pages/configuration/deploy-hooks/).
+
+
+
+
+
+## streamlining the install/setup/deploy flow:
+
+for cooks using a coding agent, the agent can handle much of the technical setup. The template doesn’t have to become a Wix-style hosted service first. It can be an agent-first recipe site kit, with a manual path for developers too.
+
+I’d build it around one guided workflow:
+
+The cook gives their agent the repo and says, “Set this up as my recipe website.”
+
+The agent checks the computer for Node.js and pnpm, installs the project, and starts a demo site so the cook can see what they’re getting.
+
+It helps the cook create or connect their GitHub, Vercel, and Sanity accounts. The cook signs in and approves access; the agent does the configuration and explains any choices in plain language.
+
+It connects Vercel and Sanity, deploys the site and Studio, and checks that publishing a recipe triggers a rebuild.
+
+It helps enter site details and content, then checks the site before launch.
+
+To make that reliable, give the agent three things:
+
+A setup skill with the step-by-step workflow, choices to explain, and clear points where the cook needs to sign in or decide something. Agent Skills use a SKILL.md playbook and can include scripts and reference files. The format is intended to be reusable, though each agent may need its own installation or discovery instructions. OpenAI overview Claude skills docs
+
+A small setup/check script for repeatable local tasks: check prerequisites, gather the Sanity project ID, write the local environment file, verify required settings, and report what remains. Scripts should handle the mechanical steps; the skill should guide the conversation and decisions.
+
+One clean, authoritative setup guide that the skill points to. The current deployment guide mixes old and new instructions, so the agent could follow contradictory steps. The agent and a human following the manual path should get the same current process.
+
+Keep two entry paths: “Let my agent set it up” and “I’ll set it up myself.” The second can use a Vercel Deploy button to shorten the initial deploy, though Vercel’s flow still clones the repo into a Git provider account such as GitHub
+
+There’s one limit to be upfront about: the agent can make the process much easier, but it can’t remove the need for accounts or substitute for the user’s sign-in and approval. Also, the skill only helps when the chosen agent can access the project files and run commands. Browser-based build agents may need a separate prompt or workflow.
+
+That suggests a practical next step: build the agent setup kit and simplify the manual guide around the same workflow
