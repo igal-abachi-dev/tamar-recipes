@@ -139,6 +139,63 @@ Leave PUBLIC_SITE_URL unset until you have the final domain, as your guide instr
 
 
 
+---------------
+## studio setup:
+
+The Sanity page gives a generic setup for projects where the website and Studio are separate sibling folders. Since your Vercel project is already connected to the tamar-recipes repo, we’ll keep the website where it is and add the Studio as a separate folder inside that repo:
+
+tamar-recipes/
+├── Astro website
+└── studio-tamar-recipes/
+
+That keeps one GitHub repo. Vercel continues building the Astro site; Sanity hosts the Studio at its own *.sanity.studio address. The Studio folder is its source code, not a second site on Vercel.
+
+The Sanity prompt also asks an agent to configure the Astro app. Since your site already has Sanity environment variables and a deployment setup, we should adapt that prompt: create the Studio and its recipe schemas to fit the existing site, without replacing the existing Astro setup.
+
+One correction: I haven’t verified whether pnpm sanity:deploy exists in your repo, so we should check the scripts before relying on it. The Sanity dashboard’s generic command creates a clean Studio, but the Studio still needs the recipe and category schemas this site expects before Tamar can use it.
+
+
+
+Create a Sanity Studio in a folder next to your existing app. Then paste the prompt into your agent to define your schema and set up your app to query and render content from Sanity.
+1
+Create a new Sanity Studio with Sanity CLI
+Run this snippet in your terminal from the folder that contains your app folder — one level above your existing app, not inside it. The Studio is a separate React application, and this command initializes it in its own folder alongside your app.
+See the documentation if you are having issues with the CLI.
+npm create sanity@latest -- --project id --dataset production --template clean --typescript --output-path studio-tamar-recipes
+2
+Copy and paste prompt to your agent
+Start your AI agent from the parent folder that contains both your app folder and the Studio folder. The agent needs to see and edit both. Then copy and paste this prompt into your agent to define your schema and configure your app.
+Folder structure
+parent-folder/ # run your agent from here
+├── your-existing-app/ # your existing Astro app
+└── studio-tamar-recipes/ # your new Sanity Studio
+
+
+
+Agent prompt
+Set up Sanity using the `sanity-best-practices` skill's `getting-started` reference.
+
+If the skill can't be found, install it by running `npx skills add sanity-io/agent-toolkit --skill sanity-best-practices -y`. If the install fails, stop and ask me to run it.
+
+Context:
+- Project: Tamar Recipes 
+- Dataset: production
+- Framework: Astro
+- Project Type: Knowledge Base
+- Connect Sanity to my existing Astro app — the Studio lives in `studio-tamar-recipes`, a sibling folder next to my app folder
+- First, confirm `studio-tamar-recipes` and my app folder are both in your working directory. If you only see my app's source code, stop and ask me to restart you from the parent folder.
+- If you're not sure which folder is my app, ask me
+- Keep the Studio standalone — do not embed it in or move it into my app
+
+
+---
+
+Keep the repo as it is. Don’t run that npm create sanity command. It would generate a second, clean Studio folder. This repo already has a Studio configuration at its root, its recipe, category, and site settings schemas, and sanity and the sanity:dev and sanity:deploy scripts in package.json.
+
+You also don’t need to rename folders or change Vercel’s root or build settings. Vercel keeps building the Astro site from the repo root. The existing Studio can be deployed separately to Sanity from that same root.
+
+
+The plan is to use the schemas already in the repo, configure the Studio with your Sanity project ID and production dataset, then run pnpm sanity:dev and pnpm sanity:deploy from the repo root.
 
 ### Draft preview
 
