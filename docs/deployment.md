@@ -404,6 +404,8 @@ if you want the same appearance: category-main-dishes.webp, challah.webp, salad.
 
 One more thing: these settings and categories alone won’t make the whole homepage match local dev. The homepage also needs the four demo recipes from the local project. Until Tamar reviews the temporary content, keep the site noindexed as the guide specifies.
 
+Content — publish a few real Tamar-approved recipes + categories + About text
+Photos — replace or supplement stock-looking hero assets with hers where it matters
 
 ### Draft preview
 
