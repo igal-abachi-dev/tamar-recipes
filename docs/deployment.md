@@ -365,6 +365,12 @@ Redeploy Vercel so its server function picks up SANITY_READ_TOKEN and PREVIEW_SE
 
 
 
+
+. Test it end to end: open Sanity Studio, open תצוגה מקדימה, and select a recipe. If there are no recipes yet, create and save a draft first; you don’t need to publish it.
+
+The preview should show that draft on your Vercel site. After editing and saving the draft, use רענון התצוגה to see the latest version. Draft edits shouldn’t trigger a Vercel build because the webhook is set to ignore drafts.
+
+
 ### Draft preview
 
 1. Create a Sanity API token with **Viewer** access to the dataset. Set it on Vercel as `SANITY_READ_TOKEN` for the server function. It must not start with `PUBLIC_`.
