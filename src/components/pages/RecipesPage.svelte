@@ -1,13 +1,15 @@
 <script lang="ts">
-  import RecipeCard from '../cards/RecipeCard.svelte';
-  import type { Recipe, Category } from '../../types/content';
+  import RecipeCard from "../cards/RecipeCard.svelte";
+  import type { Recipe, Category } from "../../types/content";
   let {
     recipes,
     categories,
-    title = 'כל המתכונים',
-    description = 'מה מתחשק להכין היום? כל המתכונים מחכים כאן, מסודרים בשבילכם.',
+    title = "כל המתכונים",
+    description = "מה מתחשק להכין היום? כל המתכונים מחכים כאן, מסודרים בשבילכם.",
     activeSlug,
     isDemo = false,
+    variant = "category",
+    emptyMessage,
   }: {
     recipes: Recipe[];
     categories: Category[];
@@ -15,10 +17,12 @@
     description?: string;
     activeSlug?: string;
     isDemo?: boolean;
+    variant?: "archive" | "category";
+    emptyMessage?: string;
   } = $props();
 </script>
 
-<div class="listing-page page-wrap">
+<div class="listing-page page-wrap" class:archive-page={variant === "archive"}>
   {#if isDemo}<div class="demo-note">
       תוכן להמחשה בלבד — המתכונים והתמונות יוחלפו במתכונים של תמר.
     </div>{/if}
@@ -34,18 +38,25 @@
         class:active={activeSlug === category.slug}>{category.title}</a
       >{/each}
   </nav>
-  {#if recipes.length}
+  <!-- Astro projects the independently hydrated search island into this legacy Svelte slot. -->
+  <!-- svelte-ignore slot_element_deprecated -->
+  <slot name="search" />
+  <div id="archive-grid">
     <div class="count">{recipes.length} מתכונים</div>
-    <div class="recipe-grid">
-      {#each recipes as recipe}<RecipeCard {recipe} />{/each}
-    </div>
-  {:else}
-    <div class="empty">
-      <h2>עדיין אין כאן מתכונים</h2>
-      <p>בקרוב יהיו כאן עוד דברים טובים להכין.</p>
-      <a href="/recipes">חזרה לכל המתכונים</a>
-    </div>
-  {/if}
+    {#if recipes.length}
+      <div class="recipe-grid">
+        {#each recipes as recipe}<RecipeCard {recipe} />{/each}
+      </div>
+    {:else if emptyMessage}
+      <div class="empty">{emptyMessage}</div>
+    {:else}
+      <div class="empty">
+        <h2>עדיין אין כאן מתכונים</h2>
+        <p>בקרוב יהיו כאן עוד דברים טובים להכין.</p>
+        <a href="/recipes">חזרה לכל המתכונים</a>
+      </div>
+    {/if}
+  </div>
 </div>
 
 <style>
@@ -89,7 +100,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 9px;
-    margin: 42px 0 46px;
+    margin: 42px 0 34px;
   }
   .category-pills a {
     padding: 10px 17px;
@@ -123,32 +134,38 @@
     padding: 45px;
     text-align: center;
   }
-  .empty h2 {
-    font-family: var(--font-display);
+  @media (max-width: 850px) {
+    .archive-page .recipe-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-  .empty a {
-    color: var(--orange);
-    font-weight: 700;
+  @media (max-width: 560px) {
+    .archive-page {
+      padding: 50px 20px;
+    }
+    .archive-page .recipe-grid {
+      grid-template-columns: 1fr;
+    }
   }
   @media (max-width: 750px) {
-    .page-wrap {
+    .listing-page:not(.archive-page) {
       padding: 50px 20px 30px;
     }
-    .recipe-grid {
+    .listing-page:not(.archive-page) .recipe-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
-    .category-pills {
+    .listing-page:not(.archive-page) .category-pills {
       justify-content: flex-start;
       margin: 30px 0;
     }
-    .category-pills a {
+    .listing-page:not(.archive-page) .category-pills a {
       font-size: 12px;
       padding: 8px 12px;
     }
   }
   @media (max-width: 530px) {
-    .recipe-grid {
+    .listing-page:not(.archive-page) .recipe-grid {
       grid-template-columns: 1fr;
     }
   }
