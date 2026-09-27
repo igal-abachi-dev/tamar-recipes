@@ -197,6 +197,33 @@ You also don’t need to rename folders or change Vercel’s root or build setti
 
 The plan is to use the schemas already in the repo, configure the Studio with your Sanity project ID and production dataset, then run pnpm sanity:dev and pnpm sanity:deploy from the repo root.
 
+about updates:
+npm install --global pnpm@10.17.0
+
+
+pnpm 10.17.0 → 12.6.0: Keep 10.17.0 for this project. Its package.json pins pnpm@10.17.0, and the lockfile was created with pnpm 10. Vercel’s build log also shows it used pnpm 10.17.0, so this update notice doesn’t affect the Vercel deploy.
+
+Sanity CLI 3.99.0 → 8.13.0: Don’t update it as part of setup. The project currently depends on Sanity 3.99.0; a major CLI update could require code or config changes. It doesn’t affect the successful Vercel deployment.
+
+Continue with the installed versions for now.
+
+Those notices don’t mean anything is expiring, and they don’t block the Studio deploy.
+
+pnpm 10.17 → 12.6: Keep 10.17.0 for this project. The repo pins that version, and Vercel used it successfully in your build. Updating pnpm alone on your computer won’t update the repo’s pin or Vercel’s version. Vercel package manager settings
+
+Sanity CLI 3.99 → 8.13: Don’t jump to the new major just to dismiss the notice. Your installed CLI is working; update Sanity packages later as a planned change, then check the Studio and site before deploying. This notice isn’t a deprecation deadline. Sanity CLI docs
+
+There is one separate warning in your Vercel log: engines.node is set to >=22.12.0, so it can match future major Node versions. For predictable builds, set Vercel’s Node.js version to 24.x under Settings → Build and Deployment → Node.js Version. It meets the repo’s minimum and is an available LTS version
+
+
+pnpm install --frozen-lockfile
+pnpm sanity:dev
+
+Open http://localhost:3333 to check the Studio. Then stop it with Ctrl+C and deploy it:
+
+pnpm sanity:deploy
+
+
 ### Draft preview
 
 1. Create a Sanity API token with **Viewer** access to the dataset. Set it on Vercel as `SANITY_READ_TOKEN` for the server function. It must not start with `PUBLIC_`.

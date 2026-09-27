@@ -13,6 +13,7 @@ export default defineConfig({
     structureTool({
       structure: (S) =>
         S.list()
+          .id('root')
           .title('תוכן האתר')
           .items([
             S.listItem()
