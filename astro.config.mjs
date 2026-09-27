@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import svelte from '@astrojs/svelte';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 import { loadEnv } from 'vite';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
@@ -15,5 +16,6 @@ const hasLiveSiteUrl = Boolean(
 export default defineConfig({
   site: env.PUBLIC_SITE_URL || 'https://example.com',
   integrations: [svelte(), ...(hasSanity && hasLiveSiteUrl ? [sitemap()] : [])],
+  adapter: vercel(),
   output: 'static',
 });

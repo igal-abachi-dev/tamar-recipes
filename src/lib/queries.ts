@@ -27,6 +27,7 @@ const recipeFields = `
 `;
 
 export const recipesQuery = groq`*[_type == "recipe" && defined(slug.current)] | order(featured desc, publishedAt desc) {${recipeFields}}`;
+export const previewRecipeQuery = groq`*[_type == "recipe" && _id == $id][0] {${recipeFields}}`;
 export const categoriesQuery = groq`*[_type == "category" && defined(slug.current)] | order(order asc, title asc) {
   _id, title, "slug": slug.current, description, image {asset->{_id, url}, alt, hotspot, crop}
 }`;

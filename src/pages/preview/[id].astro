@@ -1,0 +1,50 @@
+---
+import RecipePage from '../../components/pages/RecipePage.astro';
+import { previewClient, hasPreviewSession, previewCookieName } from '../../lib/preview';
+import { previewRecipeQuery, recipesQuery } from '../../lib/queries';
+import type { Recipe } from '../../types/content';
+
+export const prerender = false;
+
+const client = previewClient();
+const id = Astro.params.id;
+if (
+  !client ||
+  !hasPreviewSession(Astro.cookies.get(previewCookieName)?.value) ||
+  !id ||
+  !/^[a-zA-Z0-9_.-]+$/.test(id)
+) {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'private, no-store' } });
+}
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+Astro.response.headers.set('Referrer-Policy', 'no-referrer');
+
+const [recipe, recipes] = await Promise.all([
+  client.fetch<Recipe | null>(previewRecipeQuery, { id }),
+  client.fetch<Recipe[]>(recipesQuery),
+]);
+if (!recipe) {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'private, no-store' } });
+}
+
+const linkedVersions = recipes.filter(
+  (other) =>
+    other._id !== recipe._id &&
+    other.variations?.some((variation) => variation.linkedRecipe?._id === recipe._id),
+);
+const related = recipes
+  .filter((other) => other._id !== recipe._id)
+  .map((other) => ({
+    recipe: other,
+    score:
+      (other.category?.slug === recipe.category?.slug ? 10 : 0) +
+      (other.tags || []).filter((tag) => recipe.tags?.includes(tag)).length,
+  }))
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map((item) => item.recipe);
+---
+
+<RecipePage {recipe} {related} {linkedVersions} isDemo={false} preview />

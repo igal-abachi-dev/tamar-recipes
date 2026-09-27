@@ -8,7 +8,7 @@ export const GET: APIRoute = ({ site }) => {
     import.meta.env.PUBLIC_SITE_URL !== 'https://example.com',
   );
   const body = live
-    ? `User-agent: *\nAllow: /\nSitemap: ${new URL('/sitemap-index.xml', site).href}\n`
+    ? `User-agent: *\nAllow: /\nDisallow: /preview/\nDisallow: /api/preview/\nSitemap: ${new URL('/sitemap-index.xml', site).href}\n`
     : 'User-agent: *\nDisallow: /\n';
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

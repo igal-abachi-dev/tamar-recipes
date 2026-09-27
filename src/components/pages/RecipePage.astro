@@ -1,0 +1,205 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RecipeDetail from './RecipeDetail.svelte';
+import RecipeTools from '../islands/RecipeTools.svelte';
+import { imageSrc, totalMinutes } from '../../lib/content';
+import {
+  allIngredientGroups,
+  allRecipeSteps,
+  recipeVideos,
+  sortedTimeline,
+} from '../../lib/recipe-helpers';
+import { formatMeasure, ingredientMeasures } from '../../lib/measure';
+import type { Recipe } from '../../types/content';
+interface Props {
+  recipe: Recipe;
+  isDemo: boolean;
+  related: Recipe[];
+  linkedVersions: Recipe[];
+  preview?: boolean;
+}
+const { recipe, isDemo, related, linkedVersions, preview = false } = Astro.props;
+const image = imageSrc(recipe.image, 1200, 630);
+const description = recipe.description;
+const recipeJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: recipe.title,
+  description,
+  image: recipe.image?.asset
+    ? [
+        [1200, 1200],
+        [1200, 900],
+        [1200, 675],
+      ].map(([width, height]) => new URL(imageSrc(recipe.image, width, height)!, Astro.site).href)
+    : image
+      ? [new URL(image, Astro.site).href]
+      : undefined,
+  author: { '@type': 'Person', name: 'תמר' },
+  inLanguage: 'he',
+  recipeYield:
+    recipe.yieldText ||
+    (recipe.yieldCount && recipe.yieldUnit
+      ? `${recipe.yieldCount} ${recipe.yieldUnit}`
+      : undefined) ||
+    (recipe.servings ? `${recipe.servings} מנות` : undefined),
+  recipeCategory: recipe.category?.title,
+  keywords: recipe.tags?.join(', '),
+  prepTime: recipe.prepMinutes !== undefined ? `PT${recipe.prepMinutes}M` : undefined,
+  cookTime: recipe.cookMinutes !== undefined ? `PT${recipe.cookMinutes}M` : undefined,
+  totalTime: recipe.elapsedMinutes !== undefined ? `PT${totalMinutes(recipe)}M` : undefined,
+  recipeIngredient: allIngredientGroups(recipe).flatMap((group) =>
+    group.items.map((item) =>
+      [
+        formatMeasure(item, 1, 'original', recipe.gramsFirst ?? recipe.category?.slug === 'baking')
+          .primary,
+        item.name,
+        item.note && `(${item.note})`,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    ),
+  ),
+  recipeInstructions: [
+    ...(recipe.steps || []).map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      text: step.text,
+    })),
+    ...(recipe.components || []).map((component) => ({
+      '@type': 'HowToSection',
+      name: component.title,
+      itemListElement: component.recipeReference
+        ? [
+            {
+              '@type': 'HowToStep',
+              text: `מכינים לפי המתכון של ${component.recipeReference.title}`,
+              url: new URL(`/recipes/${component.recipeReference.slug}`, Astro.site).href,
+            },
+          ]
+        : (component.steps || []).map((step, index) => ({
+            '@type': 'HowToStep',
+            position: index + 1,
+            text: step.text,
+          })),
+    })),
+  ],
+  datePublished: recipe.publishedAt,
+  dateModified: recipe._updatedAt || recipe.publishedAt,
+};
+const jsonLd =
+  isDemo || preview
+    ? undefined
+    : {
+        '@context': 'https://schema.org',
+        '@graph': [
+          recipeJsonLd,
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'בית',
+                item: new URL('/', Astro.site).href,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'מתכונים',
+                item: new URL('/recipes', Astro.site).href,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: recipe.title,
+                item: new URL(`/recipes/${recipe.slug}`, Astro.site).href,
+              },
+            ],
+          },
+        ],
+      };
+---
+
+<Layout
+  title={`${recipe.title} | אתר המתכונים של תמר`}
+  {description}
+  {image}
+  type="article"
+  noindex={isDemo || preview}
+  {jsonLd}
+>
+  {
+    preview && (
+      <div class="preview-banner">
+        <span>תצוגה מקדימה — השינויים עדיין לא פורסמו</span>
+        <a href={Astro.url.pathname}>רענון התצוגה</a>
+      </div>
+    )
+  }
+  <RecipeDetail {recipe} {related} {linkedVersions} />
+  <RecipeTools
+    title={recipe.title}
+    url={new URL(Astro.url.pathname, Astro.site).href}
+    slug={recipe.slug}
+    steps={allRecipeSteps(recipe).map(
+      ({
+        text,
+        stage,
+        componentTitle,
+        localNumber,
+        recipeUrl,
+        durationMinutes,
+        durationMinutesMax,
+        ovenTimerMinutes,
+        temperatureC,
+        ovenMode,
+        flameSelectLevel,
+        burnerSize,
+        cue,
+      }) => ({
+        text,
+        stage,
+        componentTitle,
+        localNumber,
+        recipeUrl,
+        durationMinutes,
+        durationMinutesMax,
+        ovenTimerMinutes,
+        temperatureC,
+        ovenMode,
+        flameSelectLevel,
+        burnerSize,
+        cue,
+      }),
+    )}
+    timeline={sortedTimeline(recipe)}
+    baseServings={recipe.servings || 0}
+    ingredientMeasures={ingredientMeasures(recipe)}
+    gramsFirst={recipe.gramsFirst ?? recipe.category?.slug === 'baking'}
+    client:idle
+  />
+  {
+    !recipeVideos(recipe).length && recipe.video?.asset?.playbackId && (
+      <script>import '@mux/mux-player';</script>
+    )
+  }
+</Layout>
+
+<style>
+  .preview-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 28px;
+    background: var(--ink);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .preview-banner a {
+    color: white;
+    text-decoration: underline;
+  }
+</style>

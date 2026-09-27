@@ -1,6 +1,6 @@
 # Launching אתר המתכונים של תמר
 
-The public Astro site is static. Sanity hosts the editing Studio separately at a `*.sanity.studio` address; there is no public admin route on the Astro site. Tamar's recipe data is read from Sanity during each site build.
+The public recipe and category pages are static. One Vercel function renders authenticated draft recipe previews on request. Sanity hosts the editing Studio separately at a `*.sanity.studio` address; there is no public admin route on the Astro site. Published recipe data is read from Sanity during each site build.
 
 Before launch, Tamar needs to enter approved recipes, photos, and About copy. A real Sanity project, domain, host, and publish-to-rebuild webhook must also be connected.
 
@@ -10,8 +10,8 @@ Before launch, Tamar needs to enter approved recipes, photos, and About copy. A 
 2. Set `SANITY_STUDIO_HOSTNAME` to an available hostname prefix (for example `tamar-recipes`), or leave it blank and choose one when prompted. Run `pnpm sanity:deploy` from an authenticated Sanity CLI session. Sign-in and editor permissions are managed in Sanity. Do not add `/studio` or `/admin` to the public site.
 3. In Studio, create **פרטי האתר** with the approved homepage text, About story and portrait. Create categories and Tamar-approved recipes. Enter Latin slugs, images with alt text, recipe classifications, ingredients and steps. Use **סרטוני YouTube** for videos; Mux remains optional.
 
-4. Choose the final domain and set `PUBLIC_SITE_URL=https://your-domain.example` on the website host. Preview builds with the placeholder domain remain `noindex` and disallow crawling in `robots.txt`.
-5. Build with `pnpm install --frozen-lockfile`, `pnpm check`, and `pnpm build`. The output directory is `dist` and the project requires Node 22.12 or newer.
+4. Choose the final domain and set `PUBLIC_SITE_URL=https://your-domain.example` on the website host. Builds with the placeholder domain remain `noindex` and disallow crawling in `robots.txt`.
+5. Build with `pnpm install --frozen-lockfile`, `pnpm check`, and `pnpm build`. The Vercel adapter packages the static pages and preview function into `.vercel/output`. The project requires Node 22.12 or newer.
 
 An [unlisted YouTube video](https://support.google.com/youtube/answer/157177?hl=en) is suitable for a public recipe page, but anyone with its link can watch and share it. Check that Tamar wants the video publicly viewable before adding it.
 
@@ -21,11 +21,18 @@ The build also writes `llms.txt` as a short map of the public static recipe page
 
 ### Vercel
 
-Connect the repository to a Vercel project. Set the build command to `pnpm build`, output directory to `dist`, and the three public environment variables. In project **Settings → Git → Deploy Hooks**, create a hook for the production branch.
+Connect the repository to a Vercel project using the Astro framework preset. Set the build command to `pnpm build` and let the adapter provide `.vercel/output`; do not override the output directory with `dist`. Set `PUBLIC_SITE_URL`, `PUBLIC_SANITY_PROJECT_ID`, and `PUBLIC_SANITY_DATASET`. In project **Settings → Git → Deploy Hooks**, create a hook for the production branch.
 
-### Cloudflare Pages
+The draft preview uses a Vercel function. A plain Cloudflare Pages static deployment can still serve the published pages, but it cannot serve the draft preview route from this configuration.
 
-Connect the repository to a Cloudflare Pages project. Set the build command to `pnpm build`, output directory to `dist`, Node version to at least 22.12, and the three public environment variables. In **Settings → Builds**, create a deploy hook for the production branch.
+### Draft preview
+
+1. Create a Sanity API token with **Viewer** access to the dataset. Set it on Vercel as `SANITY_READ_TOKEN` for the server function. It must not start with `PUBLIC_`.
+2. Generate a long random value for `PREVIEW_SECRET` and set it on Vercel. Keep it server-only and separate from the Sanity token.
+3. Set `SANITY_STUDIO_PREVIEW_URL` to the website's HTTPS origin when building and deploying the Sanity Studio. Add that origin in the Sanity project API CORS settings with credentials allowed for Presentation. Redeploy the Studio after changing this value.
+4. In Studio, open **תצוגה מקדימה** and choose the recipe under **Used on**. The Presentation tool validates a short-lived Sanity secret; the site then issues a signed, one-hour, HTTP-only cookie for `/preview/<document-id>`. The preview page reads drafts on request. Use **רענון התצוגה** after edits to see the latest saved draft.
+
+The preview route returns 404 without a valid session, sends `noindex` and `no-store` headers, and is disallowed in `robots.txt`. Published recipe and category pages remain prebuilt. The Studio preview has no click-to-edit overlays; Tamar edits in the Studio form and uses the page preview beside it.
 
 ## Publish to rebuild
 
@@ -38,7 +45,7 @@ _type in ["recipe", "category", "siteSettings"]
 Keep the deploy hook URL private; anyone with it can trigger builds. Publish a test recipe and confirm that the host starts a build, the updated static page appears, and `robots.txt`, sitemap, canonical URL and structured data use the final domain. Deleting or unpublishing content must also trigger a rebuild.
 
 
-Leave "drafts" unchecked on the Sanity webhook. Otherwise every Studio autosave triggers a Vercel build. The filter should only fire on published documents.
+Leave "drafts" unchecked on the Sanity webhook. The preview function fetches drafts directly, so Studio autosaves do not need a Vercel build. The filter should only fire on published documents.
 
 Settle category slugs before launch. They're in every URL. Enter the siteSettings and categories first, then recipes.
 

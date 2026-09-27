@@ -10,7 +10,7 @@
 - **Cookable recipe pages:** grouped ingredients, component recipes, numbered steps, a short/full reading view, related recipes, print styles, and lazy YouTube embeds. Mux is available as an optional video source.
 - **Kitchen tools:** serving scaling, original/metric/US customary measures, multiple timers, a serving-time planner, cooking mode with saved progress, screen Wake Lock where supported, and sharing. Numeric ingredients scale; free-text amounts and notes stay as Tamar wrote them.
 - **Detailed editing model:** Sanity fields for time ranges, equipment, oven and burner settings, doneness targets, timelines, variations, storage, sources, kosher adaptations, and Tamar's own cooking notes. Simple recipes can leave advanced fields empty.
-- **Static publishing:** crawlable recipe HTML, canonical and social metadata, Recipe and Breadcrumb JSON-LD, `robots.txt`, `llms.txt`, and a sitemap when real content and a live site URL are configured.
+- **Static publishing and draft preview:** crawlable published recipe HTML, canonical and social metadata, Recipe and Breadcrumb JSON-LD, `robots.txt`, `llms.txt`, and a sitemap when real content and a live site URL are configured. An authenticated Vercel function lets Tamar preview saved drafts in Sanity Presentation before publishing.
 
 The public site has no accounts, comments, contact form, or embedded administration route. Sanity Studio is deployed separately and uses Sanity's editor sign-in.
 
@@ -24,7 +24,7 @@ The public site has no accounts, comments, contact form, or embedded administrat
 | Video    | YouTube embeds first; optional Mux video when a recipe has no YouTube video                       |
 | Styling  | Project CSS tokens and self-hosted Assistant and Heebo fonts                                      |
 
-Publishing a Sanity document does not change an already deployed static page. A Sanity webhook must call the hosting provider's deploy hook to rebuild the site.
+Publishing a Sanity document does not change an already deployed static page. A Sanity webhook must call the hosting provider's deploy hook to rebuild the site. Draft previews read Sanity on request and do not wait for a rebuild.
 
 ## Run locally
 
@@ -59,6 +59,9 @@ pnpm exec astro dev stop
 | `SANITY_STUDIO_PROJECT_ID` | Studio            | Same Sanity project as the website                                                        |
 | `SANITY_STUDIO_DATASET`    | Studio            | Same dataset as the website                                                               |
 | `SANITY_STUDIO_HOSTNAME`   | Studio deployment | Optional `*.sanity.studio` hostname prefix                                                |
+| `SANITY_STUDIO_PREVIEW_URL` | Studio            | HTTPS origin of the site shown in Sanity Presentation                                      |
+| `SANITY_READ_TOKEN`       | Preview function  | Server-only Sanity Viewer token for reading drafts                                        |
+| `PREVIEW_SECRET`          | Preview function  | Server-only signing key for short-lived preview sessions                                  |
 
 Treat `PUBLIC_*` values as public and never put secrets in them. When a real Sanity ID is configured, a content fetch error fails the build instead of silently showing sample recipes.
 
@@ -67,7 +70,7 @@ Treat `PUBLIC_*` values as public and never put secrets in them. When a real San
 | Command              | Purpose                                                                       |
 | -------------------- | ----------------------------------------------------------------------------- |
 | `pnpm check`         | Check formatting, Astro and Svelte types, Sanity schemas, and recipe behavior |
-| `pnpm build`         | Generate the static site in `dist/`                                           |
+| `pnpm build`         | Generate static pages and the Vercel preview function                         |
 | `pnpm preview`       | Preview a completed build locally                                             |
 | `pnpm format`        | Format Astro, Svelte, TypeScript, and CSS source                              |
 | `pnpm format:check`  | Check formatting without changing files                                       |
@@ -80,7 +83,7 @@ The core Sanity documents are `recipe`, `category`, and the `siteSettings` singl
 
 Serving changes use numeric ingredient quantities and any known gram or milliliter equivalents. Original amounts remain in static HTML for readers and crawlers, and on live recipes they are also used in JSON-LD. Printing works without JavaScript. Converted measures are approximate where household and US customary units differ; the interface does not infer an ingredient's mass from its volume.
 
-For launch, deploy `dist/` to Vercel or Cloudflare Pages, set `PUBLIC_SITE_URL` to the final HTTPS origin, and connect a Sanity publish webhook to the host's deploy hook. Verify the built pages, indexing controls, and video playback on the final domain. The [deployment guide](docs/deployment.md) covers the steps.
+For launch, deploy with Vercel's Astro preset, set `PUBLIC_SITE_URL` to the final HTTPS origin, and connect a Sanity publish webhook to the host's deploy hook. Configure the server-only preview secrets and Studio preview origin. Verify the built pages, draft preview, indexing controls, and video playback on the final domain. The [deployment guide](docs/deployment.md) covers the steps.
 
 ## Repository map
 
