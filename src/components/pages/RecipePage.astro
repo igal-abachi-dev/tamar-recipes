@@ -132,7 +132,10 @@ const jsonLd =
   {
     preview && (
       <div class="preview-banner">
-        <span>תצוגה מקדימה — השינויים עדיין לא פורסמו</span>
+        <span>
+          תצוגה מקדימה — השינויים עדיין לא פורסמו. פתיחת הקישור בלשונית נפרדת אינה נתמכת; קישורים
+          למתכונים קשורים שטרם פורסמו עשויים להציג 404.
+        </span>
         <a href={Astro.url.pathname}>רענון התצוגה</a>
       </div>
     )
@@ -141,7 +144,7 @@ const jsonLd =
   <RecipeTools
     title={recipe.title}
     url={new URL(Astro.url.pathname, Astro.site).href}
-    slug={recipe.slug}
+    storageKey={preview ? `preview:${recipe.slug || recipe._id}` : recipe.slug || recipe._id}
     steps={allRecipeSteps(recipe).map(
       ({
         text,

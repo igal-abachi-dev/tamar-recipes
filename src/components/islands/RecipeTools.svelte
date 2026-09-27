@@ -15,7 +15,7 @@
   let {
     title,
     url,
-    slug,
+    storageKey,
     steps,
     timeline = [],
     baseServings,
@@ -24,7 +24,7 @@
   }: {
     title: string;
     url: string;
-    slug: string;
+    storageKey: string;
     steps: RecipeStepWithComponent[];
     timeline?: RecipeTimelineItem[];
     baseServings: number;
@@ -73,14 +73,14 @@
   function saveProgress(index: number) {
     currentStep = Math.max(0, Math.min(index, steps.length - 1));
     try {
-      localStorage.setItem(`recipe-progress:${slug}`, String(currentStep));
+      localStorage.setItem(`recipe-progress:${storageKey}`, String(currentStep));
     } catch {
       /* private browsing */
     }
   }
   function saveTimers() {
     try {
-      localStorage.setItem(`recipe-timers:${slug}`, JSON.stringify(timers));
+      localStorage.setItem(`recipe-timers:${storageKey}`, JSON.stringify(timers));
     } catch {
       /* private browsing */
     }
@@ -155,7 +155,7 @@
     }
     try {
       localStorage.setItem(
-        `recipe-amounts:${slug}`,
+        `recipe-amounts:${storageKey}`,
         JSON.stringify({ servings: desiredServings, system }),
       );
     } catch {
@@ -223,9 +223,9 @@
     supported = Boolean(navigator.wakeLock?.request);
     canShare = Boolean(navigator.share);
     try {
-      const saved = Number(localStorage.getItem(`recipe-progress:${slug}`));
+      const saved = Number(localStorage.getItem(`recipe-progress:${storageKey}`));
       if (Number.isInteger(saved) && saved >= 0 && saved < steps.length) currentStep = saved;
-      const stored = JSON.parse(localStorage.getItem(`recipe-timers:${slug}`) || '[]');
+      const stored = JSON.parse(localStorage.getItem(`recipe-timers:${storageKey}`) || '[]');
       if (Array.isArray(stored))
         timers = stored.filter(
           (item) =>
@@ -234,7 +234,7 @@
             typeof item.label === 'string' &&
             Number.isFinite(item.endAt),
         );
-      const amounts = JSON.parse(localStorage.getItem(`recipe-amounts:${slug}`) || 'null');
+      const amounts = JSON.parse(localStorage.getItem(`recipe-amounts:${storageKey}`) || 'null');
       if (
         amounts &&
         Number.isFinite(amounts.servings) &&

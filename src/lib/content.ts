@@ -19,8 +19,18 @@ export interface SiteContent {
 let siteContentPromise: Promise<SiteContent> | undefined;
 
 export function getSiteContent(): Promise<SiteContent> {
-  if (!siteContentPromise) siteContentPromise = loadSiteContent();
+  if (!siteContentPromise) {
+    siteContentPromise = loadSiteContent().catch((error: unknown) => {
+      siteContentPromise = undefined;
+      throw error;
+    });
+  }
   return siteContentPromise;
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  if (!hasSanity) return {};
+  return (await sanityClient.fetch<SiteSettings | null>(siteSettingsQuery)) || {};
 }
 
 async function loadSiteContent(): Promise<SiteContent> {
