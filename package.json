@@ -34,7 +34,7 @@
     "groq": "^3.89.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "sanity": "^3.89.0",
+    "sanity": "^6.17.0",
     "sanity-plugin-mux-input": "^2.8.0",
     "styled-components": "^6.5.3",
     "svelte": "^5.28.2",

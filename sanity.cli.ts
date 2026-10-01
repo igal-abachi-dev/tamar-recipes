@@ -6,4 +6,7 @@ export default defineCliConfig({
     dataset: process.env.SANITY_STUDIO_DATASET || 'production',
   },
   studioHost: process.env.SANITY_STUDIO_HOSTNAME || 'tamar-recipes',
+  deployment: {
+    appId: 'mb07jg4hyz5beyabderh5zk6',
+  },
 });
