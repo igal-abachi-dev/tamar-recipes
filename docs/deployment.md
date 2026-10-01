@@ -385,6 +385,12 @@ To match the local site, enter these temporary values in פרטי האתר:
 
 תוכן אודות: בקרוב תמר תספר כאן את הסיפור שלה במילים שלה: על המטבח, האנשים והמנות שהיא הכי אוהבת להכין.
 
+footer text: מתכונים כשרים של בית, סיפורים של שולחן. מקום לשמור ולחלוק את מה שטעים לנו באמת.
+
+
+photo desctiption: איור של כוכב
+
+
 The local version shows a star illustration where a portrait would go. Studio currently requires a portrait image and alt text before you can publish פרטי האתר. To keep the same look, you’ll need to leave it as a draft until Tamar’s portrait is ready, or use a temporary image knowing the About page will look different.
 
 Create these four categories. Set סדר to the numbers shown so they appear in the same order:
